@@ -3,8 +3,56 @@
 export type action = 
     ["Stone"] | ["Paper"] | ["Cisor"];
 
+let is_stone = (a:action) : bool => {
+    match(a, {
+        Stone: () => true,
+        Paper: () => false,
+        Cisor: () => false,
+    })
+};
+
+let is_paper = (a:action) : bool => {
+    match(a, {
+        Stone: () => false,
+        Paper: () => true,
+        Cisor: () => false,
+    })
+};
+
+let is_cisor = (a:action) : bool => {
+    match(a, {
+        Stone: () => false,
+        Paper: () => false,
+        Cisor: () => true,
+    })
+};
+
 type round_value = 
     ["Waiting"] | ["Played", chest] | ["Revealed", action];
+
+let is_waiting = (r:round_value) : bool => {
+    match(r, {
+        Waiting: () => true,
+        Played: (_:chest) => false,
+        Revealed: (_:action) => false,
+    })
+};
+
+let is_played = (r:round_value) : bool => {
+    match(r, {
+        Waiting: () => false,
+        Played: (_:chest) => true,
+        Revealed: (_:action) => false,
+    })
+};
+
+let is_revealed = (r:round_value) : bool => {
+    match(r, {
+        Waiting: () => false,
+        Played: (_:chest) => false,
+        Revealed: (_:action) => true,
+    })
+};
 
 type round = {
     player1 : [address, round_value],
@@ -28,7 +76,7 @@ export let create = ([player1, player2]:[address, address]) : t => {
     }
 };
 
-export let update = ([storage, player1, player2]:[t, address, address]) : t => {
+export let new_game = ([storage, player1, player2]:[t, address, address]) : t => {
     const new_round = storage.round + (1 as nat);
     return { 
         round : new_round,
@@ -87,23 +135,11 @@ export let play = ([storage, player, action]:[t, address, chest]) : t => {
 };
 
 let can_reveal = (round:round) : bool => {
-    return match(round.player1[1], {
-        Waiting: () => false,
-        Played: (_:chest) => {
-            return match(round.player2[1], {
-                Waiting: () => false,
-                Played: (_:chest) => true,
-                Revealed: (_:action) => true
-            })
-        },
-        Revealed: (_:chest) => {
-            return match(round.player2[1], {
-                Waiting: () => false,
-                Played: (_:chest) => true,
-                Revealed: (_:action) => true
-            })
-        }
-    })
+    if (is_waiting(round.player1[1]) || is_waiting(round.player2[1])) {
+        return false;
+    } else {
+        return true;
+    }
 };
 
 export let reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
