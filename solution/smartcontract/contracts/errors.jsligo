@@ -1,0 +1,10 @@
+export let invalid_round : string = "Invalid round";
+export let user_not_allowed_to_play_or_reveal : string = "User not allowed to play or reveal";
+export let user_not_allowed_to_reveal : string = "Not allowed to reveal this round";
+export let user_already_played : string = "You already have played for this round";
+export let missing_all_chests : string = "no actions registered";
+export let missing_sender_chest : string = "user has not played";
+export let failed_to_open_chest : string = "Failed to open chest";
+export let user_already_revealed : string = "You already have revealed your play for this round";
+export let failed_to_unpack_payload : string = "Failed to unpack the payload";
+export let no_winner : string = "No players have played in the current round, thus cannot deduce troller";

@@ -1,0 +1,128 @@
+#import "errors.jsligo" "Errors"
+
+export type action = 
+    ["Stone"] | ["Paper"] | ["Cisor"];
+
+type round_value = 
+    ["Waiting"] | ["Played", chest] | ["Revealed", action];
+
+type round = {
+    player1 : [address, round_value],
+    player2 : [address, round_value]
+};
+
+export type t = {
+    round : nat,
+    rounds : map<nat, round>,
+};
+
+let fresh_round = ([player1,player2]:[address,address]) : round => ({ 
+    player1 : [player1, Waiting ()],
+    player2 : [player2, Waiting ()],
+});
+
+export let create = ([player1, player2]:[address, address]) : t => {
+    return { 
+        round : 0 as nat,
+        rounds : Map.literal(list([ [0 as nat, fresh_round(player1 ,player2)] ])),
+    }
+};
+
+export let update = ([storage, player1, player2]:[t, address, address]) : t => {
+    const new_round = storage.round + (1 as nat);
+    return { 
+        round : new_round,
+        rounds : Map.update(new_round, Some(fresh_round(player1 ,player2)), storage.rounds),
+    }
+};
+  
+let decode_chest = ([player_key, user_chest, player_secret]: [chest_key, chest, nat]): bytes => {
+    return match (Tezos.open_chest(player_key, user_chest, player_secret), {
+        Ok_opening: (b: bytes) => b,
+        Fail_timelock: () => failwith(Errors.failed_to_open_chest),
+        Fail_decrypt: () => failwith(Errors.failed_to_open_chest)
+    });
+};
+
+let decode_action = (payload: bytes): action => { 
+    return match ((Bytes.unpack(payload) as option<action>), {
+        None: () => failwith(Errors.failed_to_unpack_payload),
+        Some: (x: action) => x,
+    });
+};
+
+let play_round = ([chest, round_value]:[chest, round_value]) : round_value => {
+    return match(round_value, {
+        Waiting: () => Played(chest),
+        Played: (chest:chest) => failwith(Errors.user_already_played),
+        Revealed : (_:action) => failwith(Errors.user_already_revealed),
+    });
+};
+
+let reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_value]) : round_value => {
+    return match(round_value, {
+        Waiting: () => failwith(Errors.missing_sender_chest),
+        Played: (chest:chest) => Revealed(decode_action(decode_chest(chest_key, chest, secret))),
+        Revealed : (_:action) => failwith(Errors.user_already_revealed),
+    });
+};
+
+export let play = ([storage, player, action]:[t, address, chest]) : t => {
+    const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: (r:round) => {
+            if (r.player1[0] == player) {
+                return { ...r, player1: [r.player1[0], play_round(action, r.player1[1])] };
+            } else if (r.player2[0] == player) {
+                return { ...r, player2: [r.player2[0], play_round(action, r.player2[1])] };
+            } else {
+                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
+            };
+        }
+    });
+
+    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
+
+    return { ...storage, rounds: rounds };    
+};
+
+let can_reveal = (round:round) : bool => {
+    return match(round.player1[1], {
+        Waiting: () => false,
+        Played: (_:chest) => {
+            return match(round.player2[1], {
+                Waiting: () => false,
+                Played: (_:chest) => true,
+                Revealed: (_:action) => true
+            })
+        },
+        Revealed: (_:chest) => {
+            return match(round.player2[1], {
+                Waiting: () => false,
+                Played: (_:chest) => true,
+                Revealed: (_:action) => true
+            })
+        }
+    })
+};
+
+export let reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
+    const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: (r:round) => {
+            if (can_reveal(r) == false) {
+                return (failwith(Errors.user_not_allowed_to_reveal));
+            } else if (r.player1[0] == player) {
+                return { ...r, player1: [r.player1[0], reveal_round(chest_key, secret, r.player1[1])] };
+            } else if (r.player2[0] == player) {
+                return { ...r, player2: [r.player2[0], reveal_round(chest_key, secret, r.player2[1])] };
+            } else {
+                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
+            };
+        }
+    });
+
+    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
+
+    return { ...storage, rounds: rounds };    
+};
