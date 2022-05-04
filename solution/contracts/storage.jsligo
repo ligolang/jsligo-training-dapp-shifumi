@@ -3,7 +3,7 @@
 export type action = 
     ["Stone"] | ["Paper"] | ["Cisor"];
 
-let is_stone = (a:action) : bool => {
+const is_stone = (a:action) : bool => {
     match(a, {
         Stone: () => true,
         Paper: () => false,
@@ -11,7 +11,7 @@ let is_stone = (a:action) : bool => {
     })
 };
 
-let is_paper = (a:action) : bool => {
+const is_paper = (a:action) : bool => {
     match(a, {
         Stone: () => false,
         Paper: () => true,
@@ -19,7 +19,7 @@ let is_paper = (a:action) : bool => {
     })
 };
 
-let is_cisor = (a:action) : bool => {
+const is_cisor = (a:action) : bool => {
     match(a, {
         Stone: () => false,
         Paper: () => false,
@@ -30,7 +30,7 @@ let is_cisor = (a:action) : bool => {
 type round_value = 
     ["Waiting"] | ["Played", chest] | ["Revealed", action];
 
-let is_waiting = (r:round_value) : bool => {
+const is_waiting = (r:round_value) : bool => {
     match(r, {
         Waiting: () => true,
         Played: (_:chest) => false,
@@ -38,7 +38,7 @@ let is_waiting = (r:round_value) : bool => {
     })
 };
 
-let is_played = (r:round_value) : bool => {
+const is_played = (r:round_value) : bool => {
     match(r, {
         Waiting: () => false,
         Played: (_:chest) => true,
@@ -46,7 +46,7 @@ let is_played = (r:round_value) : bool => {
     })
 };
 
-let is_revealed = (r:round_value) : bool => {
+const is_revealed = (r:round_value) : bool => {
     match(r, {
         Waiting: () => false,
         Played: (_:chest) => false,
@@ -64,19 +64,19 @@ export type t = {
     rounds : map<nat, round>,
 };
 
-let fresh_round = ([player1,player2]:[address,address]) : round => ({ 
+const fresh_round = ([player1,player2]:[address,address]) : round => ({ 
     player1 : [player1, Waiting ()],
     player2 : [player2, Waiting ()],
 });
 
-export let create = ([player1, player2]:[address, address]) : t => {
+export const create = ([player1, player2]:[address, address]) : t => {
     return { 
         round : 0 as nat,
         rounds : Map.literal(list([ [0 as nat, fresh_round(player1 ,player2)] ])),
     }
 };
 
-export let new_game = ([storage, player1, player2]:[t, address, address]) : t => {
+export const new_game = ([storage, player1, player2]:[t, address, address]) : t => {
     const new_round = storage.round + (1 as nat);
     return { 
         round : new_round,
@@ -84,7 +84,7 @@ export let new_game = ([storage, player1, player2]:[t, address, address]) : t =>
     }
 };
   
-let decode_chest = ([player_key, user_chest, player_secret]: [chest_key, chest, nat]): bytes => {
+const decode_chest = ([player_key, user_chest, player_secret]: [chest_key, chest, nat]): bytes => {
     return match (Tezos.open_chest(player_key, user_chest, player_secret), {
         Ok_opening: (b: bytes) => b,
         Fail_timelock: () => failwith(Errors.failed_to_open_chest),
@@ -92,14 +92,14 @@ let decode_chest = ([player_key, user_chest, player_secret]: [chest_key, chest, 
     });
 };
 
-let decode_action = (payload: bytes): action => { 
+const decode_action = (payload: bytes): action => { 
     return match ((Bytes.unpack(payload) as option<action>), {
         None: () => failwith(Errors.failed_to_unpack_payload),
         Some: (x: action) => x,
     });
 };
 
-let play_round = ([chest, round_value]:[chest, round_value]) : round_value => {
+const play_round = ([chest, round_value]:[chest, round_value]) : round_value => {
     return match(round_value, {
         Waiting: () => Played(chest),
         Played: (chest:chest) => failwith(Errors.user_already_played),
@@ -107,7 +107,7 @@ let play_round = ([chest, round_value]:[chest, round_value]) : round_value => {
     });
 };
 
-let reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_value]) : round_value => {
+const reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_value]) : round_value => {
     return match(round_value, {
         Waiting: () => failwith(Errors.missing_sender_chest),
         Played: (chest:chest) => Revealed(decode_action(decode_chest(chest_key, chest, secret))),
@@ -115,7 +115,7 @@ let reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_valu
     });
 };
 
-export let play = ([storage, player, action]:[t, address, chest]) : t => {
+export const play = ([storage, player, action]:[t, address, chest]) : t => {
     const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
         None: () => failwith(Errors.invalid_round),
         Some: (r:round) => {
@@ -134,7 +134,7 @@ export let play = ([storage, player, action]:[t, address, chest]) : t => {
     return { ...storage, rounds: rounds };    
 };
 
-let can_reveal = (round:round) : bool => {
+const can_reveal = (round:round) : bool => {
     if (is_waiting(round.player1[1]) || is_waiting(round.player2[1])) {
         return false;
     } else {
@@ -142,7 +142,7 @@ let can_reveal = (round:round) : bool => {
     }
 };
 
-export let reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
+export const reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
     const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
         None: () => failwith(Errors.invalid_round),
         Some: (r:round) => {

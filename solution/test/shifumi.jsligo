@@ -8,19 +8,19 @@ type player = {
 };
 
 // prepare players
-let _:unit = Test.reset_state((3 as nat),(list([]) as list<tez>));
-let alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
-let bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
-let james: address = Test.nth_bootstrap_account(2);
+const _:unit = Test.reset_state((3 as nat),(list([]) as list<tez>));
+const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+const james: address = Test.nth_bootstrap_account(2);
 
 // Contract origination
-let get_contract = (storage:Contract.Storage.t) : contract<Contract.parameter> => {
+const get_contract = (storage:Contract.Storage.t) : contract<Contract.parameter> => {
     const originated = Test.originate(Contract.main, storage, (0 as tez));
     return (Test.to_contract(originated[0]) as contract<Contract.parameter>); 
 };
 
 // Shifumi turn
-let get_play = ([play, secret]: [Contract.Storage.action, nat]) : [chest, chest_key] => {
+const get_play = ([play, secret]: [Contract.Storage.action, nat]) : [chest, chest_key] => {
     const payload = Bytes.pack(play);
     return Test.create_chest(payload, secret);
 };
@@ -29,7 +29,7 @@ let get_play = ([play, secret]: [Contract.Storage.action, nat]) : [chest, chest_
 // Test cases
 // ----------------------------------
 
-let case_alice_play = () : string => {
+const alice_play = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
 
@@ -44,7 +44,7 @@ let case_alice_play = () : string => {
     return "✅";
 };
 
-let case_alice_play_twice = () : string => {
+const alice_play_twice = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -61,7 +61,7 @@ let case_alice_play_twice = () : string => {
 };
 
 
-let case_alice_play_and_reveal = () : string => {
+const alice_play_and_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -77,7 +77,7 @@ let case_alice_play_and_reveal = () : string => {
     return "✅";
 };
 
-let case_alice_reveal = () : string => {
+const alice_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -92,7 +92,7 @@ let case_alice_reveal = () : string => {
     return "✅";
 };
 
-let case_alice_play_bob_play = () : string => {
+const alice_play_bob_play = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -110,7 +110,7 @@ let case_alice_play_bob_play = () : string => {
     return "✅";
 };
 
-let case_alice_play_bob_play_alice_reveal = () : string => {
+const alice_play_bob_play_alice_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -131,7 +131,7 @@ let case_alice_play_bob_play_alice_reveal = () : string => {
     return "✅";
 };
 
-let case_alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
+const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -156,7 +156,7 @@ let case_alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
 };
 
 
-let case_james_cannot_play = () : string => {
+const james_cannot_play = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
 
@@ -171,11 +171,11 @@ let case_james_cannot_play = () : string => {
     return "✅";
 };
 
-let test_case_alice_play = case_alice_play ();
-let test_case_alice_play_twice = case_alice_play_twice ();
-let test_case_alice_play_and_try_reveal = case_alice_play_and_reveal ();
-let test_case_alice_reveal = case_alice_reveal ();
-let test_case_alice_play_bob_play = case_alice_play_bob_play ();
-let test_case_alice_play_bob_play_alice_reveal = case_alice_play_bob_play_alice_reveal ();
-let test_case_alice_play_bob_play_alice_reveal_bob_reveal = case_alice_play_bob_play_alice_reveal_bob_reveal ();
-let test_case_james_cannot_play = case_james_cannot_play ()
+const test_alice_play = alice_play ();
+const test_alice_play_twice = alice_play_twice ();
+const test_alice_play_and_try_reveal = alice_play_and_reveal ();
+const test_alice_reveal = alice_reveal ();
+const test_alice_play_bob_play = alice_play_bob_play ();
+const test_alice_play_bob_play_alice_reveal = alice_play_bob_play_alice_reveal ();
+const test_alice_play_bob_play_alice_reveal_bob_reveal = alice_play_bob_play_alice_reveal_bob_reveal ();
+const test_james_cannot_play = james_cannot_play ()

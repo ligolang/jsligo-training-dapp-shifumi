@@ -14,6 +14,8 @@ Goal of this training is to develop a shifumi game with smart contract. You will
 - use chest functionality,
 - apply a TDD (Test driven development) approach.
 
+# 
+
 Shifumi nominal sequence diagram
 ```mermaid
 sequenceDiagram
@@ -28,16 +30,16 @@ sequenceDiagram
   Player2->>SM: chest_key, secret
 ```
 
-# :memo: Prerequisites
+# Prerequisites
 
 Please install this software first on your machine or use online alternative : 
 
 - [ ] [VS Code](https://code.visualstudio.com/download) : as text editor
 - [ ] [ligo](https://ligolang.org/docs/intro/installation/) : high level language that's transpile to michelson low level language and provide lot of development support for Tezos
 
-# :scroll: Smart contract
+# Smart contract
 
-## Step 1 : Create folder & file
+## Step 1 : Create folders & files
 
 ```bash
 mkdir smartcontract
@@ -47,15 +49,29 @@ touch ./shifumi/test/test.jsligo
 
 ## Step 2 : Edit main.jsligo
 
-Add a main function
+Add the `Storage` namespace, the parameter type and finally the `main` function.
 
 ```ligo
-namespace Storage {
+export namespace Storage {
+    export type action = ["Stone"] | ["Paper"] | ["Cisor"];
+
     export type t = unit;
-  
-    export let new_game = ([storage, player1, player2]:[t, address, address]) : t => storage;
-    export let play = ([storage, player, chest]:[t, address, chest]) : t => storage;
-    export let reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => storage;
+
+    export const create = ([player1, player2]:[address, address]) : t => {
+      return failwith("TODO");
+    };
+
+    export const new_game = ([storage, player1, player2]:[t, address, address]) : t => {
+      return failwith("TODO");
+    };
+
+    export const play = ([storage, player, chest]:[t, address, chest]) : t => {
+      return failwith("TODO");
+    };
+
+    export const reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
+      return failwith("TODO");
+    };
 };
 
 export type parameter = 
@@ -63,7 +79,7 @@ export type parameter =
 | ["Play", chest] 
 | ["Reveal", [chest_key, nat]];
 
-export let main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
+export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
     const new_storage = match(parameter, {
         Reset : (p:[address,adress]) => Storage.new_game(storage, p[0], p[1]),
         Play : (p:chest) => Storage.play(storage, Tezos.sender, p),
@@ -90,8 +106,8 @@ We use `match` to evaluate the parameter and call the appropriated `poke` functi
 
 ```ligo
     match (action, {
-        Reset : (p:[address,adress]) => Storage.new_game(storage, p[0], p[1]),
-        Play : (p:chest) => Storage.play(storage, Tezos.sender, p),
+        Reset  : (p:[address,adress]) => Storage.new_game(storage, p[0], p[1]),
+        Play   : (p:chest)            => Storage.play(storage, Tezos.sender, p),
         Reveal : (p:[chest_key, nat]) => Storage.reveal(storage, Tezos.sender, p[0], p[1]),
     } 
 ```
@@ -100,10 +116,7 @@ We use `match` to evaluate the parameter and call the appropriated `poke` functi
 by the following type:
 
 ```ligo
-export type parameter = 
-  ["Reset", [address, address]] 
-| ["Play", chest] 
-| ["Reveal", [chest_key, nat]];
+export type parameter = ["Reset", address, address] | ["Play", chest] | ["Reveal", chest_key, nat];
 ```
 
 > Doc https://ligolang.org/docs/language-basics/unit-option-pattern-matching#variant-types
