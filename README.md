@@ -33,7 +33,7 @@ sequenceDiagram
   participant SM
   participant Player2
   Note left of Player1: Prepare chest(stone|paper|cisor, secret)
-  Note left of Player2: Prepare chest(stone|paper|cisor, secret)
+  Note right of Player2: Prepare chest(stone|paper|cisor, secret)
   Player1->>SM: chest
   Player2->>SM: chest
   Player1->>SM: chest_key, secret
@@ -47,7 +47,7 @@ sequenceDiagram
   participant SM
   participant Player2
   Note left of Player1: Prepare chest(stone|paper|cisor, secret)
-  Note left of Player2: Prepare chest(stone|paper|cisor, secret)
+  Note right of Player2: Prepare chest(stone|paper|cisor, secret)
   Player1->>SM: chest
   Player1-xSM: chest_key, secret
   Player2->>SM: chest
