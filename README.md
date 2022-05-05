@@ -11,10 +11,20 @@ Training Shifumi dapp
 
 Goal of this training is to develop a shifumi game with smart contract. You will learn : 
 - create a smart contract in jsligo,
-- use chest functionality,
+- use specific chest functionality,
 - apply a TDD (Test driven development) approach.
 
-# 
+# Game rule
+
+> We propose an implementation for only two players in order to simplify some algorithms.
+
+The gameplay is done in two stages. The first one each player choose to play `stone` or `paper` or `cisor`
+and cipher it thanks to the `chest` functionality provided by the Tezos protocol.
+
+> [Chest in Tezos]()
+
+The second one each player reveal his choice sending the `chest_key` and the `secret` used for the ciphering.
+Of course a player cannot reveal its choice since the other one did not play.
 
 Shifumi nominal sequence diagram
 ```mermaid
@@ -25,6 +35,21 @@ sequenceDiagram
   Note left of Player1: Prepare chest(stone|paper|cisor, secret)
   Note left of Player2: Prepare chest(stone|paper|cisor, secret)
   Player1->>SM: chest
+  Player2->>SM: chest
+  Player1->>SM: chest_key, secret
+  Player2->>SM: chest_key, secret
+```
+
+Shifumi prohibited sequence diagram
+```mermaid
+sequenceDiagram
+  participant Player1
+  participant SM
+  participant Player2
+  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
+  Note left of Player2: Prepare chest(stone|paper|cisor, secret)
+  Player1->>SM: chest
+  Player1-xSM: chest_key, secret
   Player2->>SM: chest
   Player1->>SM: chest_key, secret
   Player2->>SM: chest_key, secret
