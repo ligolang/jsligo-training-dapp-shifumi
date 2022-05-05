@@ -26,7 +26,8 @@ and cipher it thanks to the `chest` functionality provided by the Tezos protocol
 The second one each player reveal his choice sending the `chest_key` and the `secret` used for the ciphering.
 Of course a player cannot reveal its choice since the other one did not play.
 
-Shifumi nominal sequence diagram
+## Nominal sequence diagram
+
 ```mermaid
 sequenceDiagram
   participant Player1
@@ -40,7 +41,10 @@ sequenceDiagram
   Player2->>SM: chest_key, secret
 ```
 
-Shifumi prohibited sequence diagram
+## Prohibited sequences
+
+### Cannot reveal when another player did not play
+
 ```mermaid
 sequenceDiagram
   participant Player1
@@ -50,9 +54,34 @@ sequenceDiagram
   Note right of Player2: Prepare chest(stone|paper|cisor, secret)
   Player1->>SM: chest
   Player1-xSM: chest_key, secret
+```
+
+### Cannot play twice
+
+```mermaid
+sequenceDiagram
+  participant Player1
+  participant SM
+  participant Player2
+  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
+  Note right of Player2: Prepare chest(stone|paper|cisor, secret)
+  Player1->>SM: chest
+  Player1-xSM: chest
+```
+
+### Cannot reveal twice
+
+```mermaid
+sequenceDiagram
+  participant Player1
+  participant SM
+  participant Player2
+  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
+  Note right of Player2: Prepare chest(stone|paper|cisor, secret)
+  Player1->>SM: chest
   Player2->>SM: chest
   Player1->>SM: chest_key, secret
-  Player2->>SM: chest_key, secret
+  Player1-xSM: chest_key, secret
 ```
 
 # Prerequisites
