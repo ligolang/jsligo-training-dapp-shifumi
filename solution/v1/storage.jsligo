@@ -1,0 +1,101 @@
+#import "errors.jsligo" "Errors"
+
+export type action = 
+    ["Stone"] | ["Paper"] | ["Cisor"];
+
+const is_stone = (a:action) : bool => {
+    match(a, {
+        Stone: () => true,
+        Paper: () => false,
+        Cisor: () => false,
+    })
+};
+
+const is_paper = (a:action) : bool => {
+    match(a, {
+        Stone: () => false,
+        Paper: () => true,
+        Cisor: () => false,
+    })
+};
+
+const is_cisor = (a:action) : bool => {
+    match(a, {
+        Stone: () => false,
+        Paper: () => false,
+        Cisor: () => true,
+    })
+};
+
+type round_value = 
+    ["Waiting"] | ["Played", action];
+
+const is_waiting = (r:round_value) : bool => {
+    match(r, {
+        Waiting: () => true,
+        Played: a => false,
+    })
+};
+
+const is_played = (r:round_value) : bool => {
+    match(r, {
+        Waiting: () => false,
+        Played: p => true,
+    })
+};
+
+type round = {
+    player1 : [address, round_value],
+    player2 : [address, round_value]
+};
+
+export type t = {
+    round : nat,
+    rounds : map<nat, round>,
+};
+
+const fresh_round = ([player1,player2]:[address,address]) : round => ({ 
+    player1 : [player1, Waiting ()],
+    player2 : [player2, Waiting ()],
+});
+
+export const create = ([player1, player2]:[address, address]) : t => {
+    return { 
+        round : 0 as nat,
+        rounds : Map.literal(list([ [0 as nat, fresh_round(player1 ,player2)] ])),
+    }
+};
+
+export const new_game = ([storage, player1, player2]:[t, address, address]) : t => {
+    const new_round = storage.round + (1 as nat);
+    return { 
+        round : new_round,
+        rounds : Map.update(new_round, Some(fresh_round(player1 ,player2)), storage.rounds),
+    }
+};
+  
+const play_round = (action:action,round_value:round_value) : round_value => {
+    return match(round_value, {
+        Waiting: () => Played(action),
+        Played: p => failwith(Errors.user_already_played),
+    });
+};
+
+export const play = ([storage, player, action]:[t, address, action]) : t => {
+    const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: (r:round) => {
+            if (r.player1[0] == player) {
+                return { ...r, player1: [r.player1[0], play_round(action, r.player1[1])] };
+            } else if (r.player2[0] == player) {
+                return { ...r, player2: [r.player2[0], play_round(action, r.player2[1])] };
+            } else {
+                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
+            };
+        }
+    });
+
+    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
+
+    return { ...storage, rounds: rounds };    
+};

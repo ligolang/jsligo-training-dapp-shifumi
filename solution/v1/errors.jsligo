@@ -1,0 +1,5 @@
+export const invalid_round : string = "Invalid round";
+export const user_not_allowed_to_play_or_reveal : string = "User not allowed to play or reveal";
+export const user_not_allowed_to_reveal : string = "Not allowed to reveal this round";
+export const user_already_played : string = "You already have played for this round";
+export const no_winner : string = "No players have played in the current round, thus cannot deduce troller";

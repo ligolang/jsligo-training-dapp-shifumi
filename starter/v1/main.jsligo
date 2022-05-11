@@ -1,0 +1,29 @@
+export namespace Storage {
+    export type action = ["Stone"] | ["Paper"] | ["Cisor"];
+
+    export type t = unit;
+
+    export const create = (player1:address, player2:address) : t => {
+      return failwith("TODO");
+    };
+
+    export const new_game = (storage:t, player1:address, player2:address) : t => {
+      return failwith("TODO");
+    };
+
+    export const play = (storage:t, player:address, action:action) : t => {
+      return failwith("TODO");
+    };
+};
+
+export type parameter = 
+  ["Reset", [address, address]] 
+| ["Play", Storage.action];
+
+export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
+    const new_storage = match(parameter, {
+        Reset : p => Storage.new_game(storage, p[0], p[1]),
+        Play : p => Storage.play(storage, Tezos.sender, p)
+    });
+    return [list([]) as list<operation>, new_storage];
+};
