@@ -22,7 +22,6 @@ const fresh_round : round = ({
     player2 : Waiting (),
 });
 
-
 const is_waiting = (r:round_value) : bool => {
     match(r, {
         Waiting: () => true,
@@ -146,7 +145,7 @@ export const conclude = (storage:t): [list<operation>, t] => {
     return match(Map.find_opt(storage.round, storage.rounds), {
         None: () => failwith(Errors.invalid_round),
         Some: r => {
-            if (is_revealed(r.player1) && is_revealed(r.player1)) {
+            if (is_revealed(r.player1) && is_revealed(r.player2)) {
                 return [list([]) as list<operation>, new_game(storage)];
             } else {
                 return [list([]) as list<operation>, storage];

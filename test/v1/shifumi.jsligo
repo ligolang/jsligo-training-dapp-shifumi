@@ -15,14 +15,8 @@ const james: address = Test.nth_bootstrap_account(2);
 
 // Contract origination
 const get_contract = (storage:Contract.Storage.t) : contract<Contract.parameter> => {
-    const originated = Test.originate(Contract.main, storage, (0 as tez));
+    const originated = Test.originate(Contract.main, storage, 0 as tez);
     return (Test.to_contract(originated[0]) as contract<Contract.parameter>); 
-};
-
-// Shifumi turn
-const get_play = ([play, secret]: [Contract.Action.t, nat]) : [chest, chest_key] => {
-    const payload = Bytes.pack(play);
-    return Test.create_chest(payload, secret);
 };
 
 // ----------------------------------
@@ -35,7 +29,7 @@ const alice_play = () : string => {
 
     // When
     Test.set_source(alice.address);
-    const result = Test.transfer_to_contract(contract, Play(Paper()), (0 as tez));
+    const result = Test.transfer_to_contract(contract, Play(Paper()), 0 as tez);
     
     // Then
     Assert.assert_success(result);
@@ -48,10 +42,10 @@ const alice_play_twice = () : string => {
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material = Paper();
-    const _ = Test.transfer_to_contract(contract, Play(material), (0 as tez));
+    const _ = Test.transfer_to_contract(contract, Play(material), 0 as tez);
 
     // When
-    const result = Test.transfer_to_contract(contract, Play(material), (0 as tez));
+    const result = Test.transfer_to_contract(contract, Play(material), 0 as tez);
     
     // Then
     Assert.assert_string_failure(result, Errors.user_already_played);
@@ -64,12 +58,12 @@ const alice_play_bob_play = () : string => {
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material_alice = Paper();
-    const _ = Test.transfer_to_contract(contract, Play(material_alice), (0 as tez));
+    const _ = Test.transfer_to_contract(contract, Play(material_alice), 0 as tez);
 
     // When
     Test.set_source(bob.address);
     const material_bob = Cisor();
-    const result = Test.transfer_to_contract(contract, Play(material_bob), (0 as tez));
+    const result = Test.transfer_to_contract(contract, Play(material_bob), 0 as tez);
   
     // Then
     Assert.assert_success(result);
@@ -84,7 +78,7 @@ const james_cannot_play = () : string => {
     // When
     Test.set_source(james);
     const material = Paper();
-    const result = Test.transfer_to_contract(contract, Play(material), (0 as tez));
+    const result = Test.transfer_to_contract(contract, Play(material), 0 as tez);
 
     // Then
     Assert.assert_string_failure(result, Errors.user_not_allowed_to_play_or_reveal)

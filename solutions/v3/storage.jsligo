@@ -103,7 +103,7 @@ const reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_va
 };
 
 export const play = ([storage, player, action]:[t, address, chest]) : [list<operation>, t] => {
-    if (Tezos.amount != (1 as tez)) {
+    if (Tezos.amount == (0 as tez)) {
         failwith(Errors.bet_mount_required);
     }
 

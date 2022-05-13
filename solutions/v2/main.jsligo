@@ -1,12 +1,10 @@
 #import "storage.jsligo" "Storage"
 
-export type parameter = 
-  ["Play", chest] 
-| ["Reveal", [chest_key, nat]];
+export type parameter = ["Play", chest] | ["Reveal", [chest_key, nat]];
 
-export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
+export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
     match(parameter, {
-        Play : (p:chest) => Storage.play(storage, Tezos.sender, p),
-        Reveal : (p:[chest_key, nat]) => Storage.conclude(Storage.reveal(storage, Tezos.sender, p[0], p[1])),
+        Play   : p => Storage.play(storage, Tezos.sender, p),
+        Reveal : p => Storage.conclude(Storage.reveal(storage, Tezos.sender, p[0], p[1])),
     });    
 };
