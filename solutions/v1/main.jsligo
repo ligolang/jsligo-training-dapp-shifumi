@@ -1,10 +1,43 @@
-#import "storage.jsligo" "Storage"
+#import "errors.jsligo" "Errors"
 #import "action.jsligo" "Action"
+#import "storage.jsligo" "Storage"
+
+const play = (storage:Storage.t, player:address, action: Action.t) : Storage.t => {
+    const new_round : Storage.round = match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: r => {
+            if (storage.player1 == player) {
+                return { ...r, player1: Storage.play_round(action, r.player1) };
+            } else if (storage.player2 == player) {
+                return { ...r, player2: Storage.play_round(action, r.player2) };
+            } else {
+                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
+            };
+        }
+    });
+
+    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
+
+    return { ...storage, rounds: rounds };    
+};
+
+const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
+    return match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: r => {
+            if (Storage.is_played(r.player1) && Storage.is_played(r.player2)) {
+                return [list([]) as list<operation>, Storage.new_game(storage)];
+            } else {
+                return [list([]) as list<operation>, storage];
+            }
+        }
+    });
+};
 
 export type parameter = | ["Play", Action.t];
 
 export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
     match(parameter, {
-        Play : p => Storage.conclude(Storage.play(storage, Tezos.sender, p))
+        Play : p => conclude(play(storage, Tezos.sender, p))
     });
 };

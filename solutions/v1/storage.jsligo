@@ -18,7 +18,7 @@ const is_played = (r:round_value) : bool => {
     });
 };
 
-type round = {
+export type round = {
     player1 : round_value,
     player2 : round_value
 };
@@ -53,42 +53,9 @@ const new_game = (storage:t) : t => {
     });
 };
   
-const play_round = (action:Action.t,round_value:round_value) : round_value => {
+export const play_round = (action:Action.t,round_value:round_value) : round_value => {
     return match(round_value, {
         Waiting: () => Played(action),
         Played: _p => failwith(Errors.user_already_played),
     });
 };
-
-export const play = (storage: t, player: address, action: Action.t) : t => {
-    const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
-        None: () => failwith(Errors.invalid_round),
-        Some: (r:round) => {
-            if (storage.player1 == player) {
-                return { ...r, player1: play_round(action, r.player1) };
-            } else if (storage.player2 == player) {
-                return { ...r, player2: play_round(action, r.player2) };
-            } else {
-                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
-            };
-        }
-    });
-
-    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
-
-    return { ...storage, rounds: rounds };    
-};
-
-
-export const conclude = (storage:t): [list<operation>, t] => {
-    return match(Map.find_opt(storage.round, storage.rounds), {
-        None: () => failwith(Errors.invalid_round),
-        Some: r => {
-            if (is_played(r.player1) && is_played(r.player2)) {
-                return [list([]) as list<operation>, new_game(storage)];
-            } else {
-                return [list([]) as list<operation>, storage];
-            }
-        }
-    });
-}

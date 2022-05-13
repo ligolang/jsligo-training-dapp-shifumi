@@ -5,7 +5,7 @@ type round_value =
     ["Waiting"] | ["Played", chest] | ["Revealed", Action.t];
 
 
-type round = {
+export type round = {
     player1 : round_value,
     player2 : round_value
 };
@@ -92,64 +92,3 @@ const reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_va
         Revealed : (_:action) => failwith(Errors.user_already_revealed),
     });
 };
-
-export const play = ([storage, player, action]:[t, address, chest]) : [list<operation>, t] => {
-    const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
-        None: () => failwith(Errors.invalid_round),
-        Some: (r:round) => {
-            if (storage.player1 == player) {
-                return { ...r, player1: play_round(action, r.player1) };
-            } else if (storage.player2 == player) {
-                return { ...r, player2: play_round(action, r.player2) };
-            } else {
-                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
-            };
-        }
-    });
-
-    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
-
-    return [list([]) as list<operation>, { ...storage, rounds: rounds }];    
-};
-
-export const reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
-    const can_reveal = (round:round) : bool => {
-        if (is_waiting(round.player1) || is_waiting(round.player2)) {
-            return false;
-        } else {
-            return true;
-        }
-    };
-
-    const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
-        None: () => failwith(Errors.invalid_round),
-        Some: (r:round) => {
-            if (can_reveal(r) == false) {
-                return (failwith(Errors.user_not_allowed_to_reveal));
-            } else if (storage.player1 == player) {
-                return { ...r, player1: reveal_round(chest_key, secret, r.player1) };
-            } else if (storage.player2 == player) {
-                return { ...r, player2: reveal_round(chest_key, secret, r.player2) };
-            } else {
-                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
-            };
-        }
-    });
-
-    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
-
-    return { ...storage, rounds: rounds };    
-};
-
-export const conclude = (storage:t): [list<operation>, t] => {
-    return match(Map.find_opt(storage.round, storage.rounds), {
-        None: () => failwith(Errors.invalid_round),
-        Some: r => {
-            if (is_revealed(r.player1) && is_revealed(r.player2)) {
-                return [list([]) as list<operation>, new_game(storage)];
-            } else {
-                return [list([]) as list<operation>, storage];
-            }
-        }
-    });
-}
