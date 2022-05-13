@@ -1,0 +1,10 @@
+#import "storage.jsligo" "Storage"
+#import "action.jsligo" "Action"
+
+export type parameter = | ["Play", Action.t];
+
+export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
+    match(parameter, {
+        Play : p => Storage.conclude(Storage.play(storage, Tezos.sender, p))
+    });
+};

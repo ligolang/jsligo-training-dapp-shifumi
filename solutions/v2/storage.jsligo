@@ -1,86 +1,65 @@
 #import "errors.jsligo" "Errors"
-
-export type action = 
-    ["Stone"] | ["Paper"] | ["Cisor"];
-
-const is_stone = (a:action) : bool => {
-    match(a, {
-        Stone: () => true,
-        Paper: () => false,
-        Cisor: () => false,
-    })
-};
-
-const is_paper = (a:action) : bool => {
-    match(a, {
-        Stone: () => false,
-        Paper: () => true,
-        Cisor: () => false,
-    })
-};
-
-const is_cisor = (a:action) : bool => {
-    match(a, {
-        Stone: () => false,
-        Paper: () => false,
-        Cisor: () => true,
-    })
-};
+#import "action.jsligo" "Action"
 
 type round_value = 
-    ["Waiting"] | ["Played", chest] | ["Revealed", action];
+    ["Waiting"] | ["Played", chest] | ["Revealed", Action.t];
+
+
+type round = {
+    player1 : round_value,
+    player2 : round_value
+};
+
+export type t = {
+    round   : nat,
+    player1 : address,
+    player2 : address,
+    rounds  : map<nat, round>
+};
+
+const fresh_round : round = ({ 
+    player1 : Waiting (),
+    player2 : Waiting (),
+});
+
 
 const is_waiting = (r:round_value) : bool => {
     match(r, {
         Waiting: () => true,
-        Played: (_:chest) => false,
-        Revealed: (_:action) => false,
+        Played: _p => false,
+        Revealed: _p => false,
     })
 };
 
 const is_played = (r:round_value) : bool => {
     match(r, {
         Waiting: () => false,
-        Played: (_:chest) => true,
-        Revealed: (_:action) => false,
+        Played: _p => true,
+        Revealed: _p => false,
     })
 };
 
 const is_revealed = (r:round_value) : bool => {
     match(r, {
         Waiting: () => false,
-        Played: (_:chest) => false,
-        Revealed: (_:action) => true,
+        Played: _p => false,
+        Revealed: _p => true,
     })
 };
 
-type round = {
-    player1 : [address, round_value],
-    player2 : [address, round_value]
-};
-
-export type t = {
-    round : nat,
-    rounds : map<nat, round>,
-};
-
-const fresh_round = ([player1,player2]:[address,address]) : round => ({ 
-    player1 : [player1, Waiting ()],
-    player2 : [player2, Waiting ()],
+export const fresh_game = (p1:address, p2:address) : t => ({
+    round   : 0 as nat,
+    player1 : p1,
+    player2 : p2,
+    rounds  : Map.literal(list([ [0 as nat, fresh_round] ]))
 });
 
-export const create = ([player1, player2]:[address, address]) : t => {
-    return { 
-        round : 0 as nat,
-        rounds : Map.literal(list([ [0 as nat, fresh_round(player1 ,player2)] ])),
-    }
-};
-
-export const new_game = ([storage, player1, player2]:[t, address, address]) : t => {
+export const new_game = (storage:t) : t => {
     const new_round = storage.round + (1 as nat);
     return { 
+        ...storage,
         round : new_round,
-        rounds : Map.update(new_round, Some(fresh_round(player1 ,player2)), storage.rounds),
+        rounds : Map.update(new_round, Some(fresh_round), storage.rounds),
     }
 };
   
@@ -92,8 +71,8 @@ const decode_chest = ([player_key, user_chest, player_secret]: [chest_key, chest
     });
 };
 
-const decode_action = (payload: bytes): action => { 
-    return match ((Bytes.unpack(payload) as option<action>), {
+const decode_action = (payload: bytes): Action.t => { 
+    return match ((Bytes.unpack(payload) as option<Action.t>), {
         None: () => failwith(Errors.failed_to_unpack_payload),
         Some: (x: action) => x,
     });
@@ -115,14 +94,14 @@ const reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_va
     });
 };
 
-export const play = ([storage, player, action]:[t, address, chest]) : t => {
+export const play = ([storage, player, action]:[t, address, chest]) : [list<operation>, t] => {
     const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
         None: () => failwith(Errors.invalid_round),
         Some: (r:round) => {
-            if (r.player1[0] == player) {
-                return { ...r, player1: [r.player1[0], play_round(action, r.player1[1])] };
-            } else if (r.player2[0] == player) {
-                return { ...r, player2: [r.player2[0], play_round(action, r.player2[1])] };
+            if (storage.player1 == player) {
+                return { ...r, player1: play_round(action, r.player1) };
+            } else if (storage.player2 == player) {
+                return { ...r, player2: play_round(action, r.player2) };
             } else {
                 return (failwith(Errors.user_not_allowed_to_play_or_reveal));
             };
@@ -131,27 +110,27 @@ export const play = ([storage, player, action]:[t, address, chest]) : t => {
 
     const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
 
-    return { ...storage, rounds: rounds };    
-};
-
-const can_reveal = (round:round) : bool => {
-    if (is_waiting(round.player1[1]) || is_waiting(round.player2[1])) {
-        return false;
-    } else {
-        return true;
-    }
+    return [list([]) as list<operation>, { ...storage, rounds: rounds }];    
 };
 
 export const reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
+    const can_reveal = (round:round) : bool => {
+        if (is_waiting(round.player1) || is_waiting(round.player2)) {
+            return false;
+        } else {
+            return true;
+        }
+    };
+
     const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
         None: () => failwith(Errors.invalid_round),
         Some: (r:round) => {
             if (can_reveal(r) == false) {
                 return (failwith(Errors.user_not_allowed_to_reveal));
-            } else if (r.player1[0] == player) {
-                return { ...r, player1: [r.player1[0], reveal_round(chest_key, secret, r.player1[1])] };
-            } else if (r.player2[0] == player) {
-                return { ...r, player2: [r.player2[0], reveal_round(chest_key, secret, r.player2[1])] };
+            } else if (storage.player1 == player) {
+                return { ...r, player1: reveal_round(chest_key, secret, r.player1) };
+            } else if (storage.player2 == player) {
+                return { ...r, player2: reveal_round(chest_key, secret, r.player2) };
             } else {
                 return (failwith(Errors.user_not_allowed_to_play_or_reveal));
             };
@@ -162,3 +141,16 @@ export const reveal = ([storage, player, chest_key, secret]:[t, address, chest_k
 
     return { ...storage, rounds: rounds };    
 };
+
+export const conclude = (storage:t): [list<operation>, t] => {
+    return match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: r => {
+            if (is_revealed(r.player1) && is_revealed(r.player1)) {
+                return [list([]) as list<operation>, new_game(storage)];
+            } else {
+                return [list([]) as list<operation>, storage];
+            }
+        }
+    });
+}

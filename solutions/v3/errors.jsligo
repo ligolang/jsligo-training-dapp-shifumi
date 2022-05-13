@@ -8,3 +8,4 @@ export const failed_to_open_chest : string = "Failed to open chest";
 export const user_already_revealed : string = "You already have revealed your play for this round";
 export const failed_to_unpack_payload : string = "Failed to unpack the payload";
 export const no_winner : string = "No players have played in the current round, thus cannot deduce troller";
+export const bet_mount_required = "Amount should be 1 tez";

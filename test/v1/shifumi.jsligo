@@ -1,6 +1,6 @@
 #import "../common/assert.mligo" "Assert"
-#import "../../starter/v1/errors.jsligo" "Errors"
-#import "../../starter/v1/main.jsligo" "Contract"
+#import "../../solutions/v1/errors.jsligo" "Errors"
+#import "../../solutions/v1/main.jsligo" "Contract"
 
 type player = {
     address: address,
@@ -20,7 +20,7 @@ const get_contract = (storage:Contract.Storage.t) : contract<Contract.parameter>
 };
 
 // Shifumi turn
-const get_play = ([play, secret]: [Contract.Storage.action, nat]) : [chest, chest_key] => {
+const get_play = ([play, secret]: [Contract.Action.t, nat]) : [chest, chest_key] => {
     const payload = Bytes.pack(play);
     return Test.create_chest(payload, secret);
 };
@@ -31,7 +31,7 @@ const get_play = ([play, secret]: [Contract.Storage.action, nat]) : [chest, ches
 
 const alice_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
 
     // When
     Test.set_source(alice.address);
@@ -45,7 +45,7 @@ const alice_play = () : string => {
 
 const alice_play_twice = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material = Paper();
     const _ = Test.transfer_to_contract(contract, Play(material), (0 as tez));
@@ -61,7 +61,7 @@ const alice_play_twice = () : string => {
 
 const alice_play_bob_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material_alice = Paper();
     const _ = Test.transfer_to_contract(contract, Play(material_alice), (0 as tez));
@@ -79,7 +79,7 @@ const alice_play_bob_play = () : string => {
 
 const james_cannot_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.create(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
 
     // When
     Test.set_source(james);

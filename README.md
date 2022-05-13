@@ -75,27 +75,27 @@ export namespace Storage {
 
     export type t = unit;
 
-    export const create = ([player1, player2]:[address, address]) : t => {
+    export const create = (player1: address, player2: address) : t => {
       return failwith("TODO");
     };
 
-    export const new_game = ([storage, player1, player2]:[t, address, address]) : t => {
+    export const new_game = (storage: t, player1: address, player2: address) : t => {
       return failwith("TODO");
     };
 
-    export const play = ([storage, player, chest]:[t, address, chest]) : t => {
+    export const play = (storage: t, player: address, action: action) : t => {
       return failwith("TODO");
     };
 };
 
 export type parameter = 
-  ["Reset", [address, address]] 
-| ["Play", action];
+    ["Reset", [address, address]] 
+  | ["Play", action];
 
-export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
+export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
     const new_storage = match(parameter, {
-        Reset : (p:[address,adress]) => Storage.new_game(storage, p[0], p[1]),
-        Play : (p:chest) => Storage.play(storage, Tezos.sender, p)
+        Reset : p => Storage.new_game(storage, p[0], p[1]),
+        Play  : p => Storage.play(storage, Tezos.sender, p)
     });
     return [list([]) as list<operation>, new_storage];
 };
@@ -119,8 +119,8 @@ We use `match` to evaluate the parameter and call the appropriated `poke` functi
 
 ```ligo
     match (action, {
-        Reset  : p => Storage.new_game(storage, p[0], p[1]),
-        Play   : p => Storage.play(storage, Tezos.sender, p)
+        Reset : p => Storage.new_game(storage, p[0], p[1]),
+        Play  : p => Storage.play(storage, Tezos.sender, p)
     } 
 ```
 
@@ -220,34 +220,42 @@ export namespace Storage {
 
     export type t = unit;
 
-    export const create = ([player1, player2]:[address, address]) : t => {
+    export const create = (player1: address, player2: address) : t => {
       return failwith("TODO");
     };
 
-    export const new_game = ([storage, player1, player2]:[t, address, address]) : t => {
+    export const new_game = (storage: t, player1: address, player2: address) : t => {
       return failwith("TODO");
     };
 
-    export const play = ([storage, player, chest]:[t, address, chest]) : t => {
+    export const play = (storage: t, player: address, action: chest) : t => {
       return failwith("TODO");
     };
 
-    export const reveal = ([storage, player, chest_key, secret]:[t, address, chest_key, nat]) : t => {
+    export const reveal = (storage: t, player: address, chest_key: chest_key, secret: nat) : t => {
       return failwith("TODO");
     };
+
 };
 
 export type parameter = 
-  ["Reset", [address, address]] 
-| ["Play", chest] 
-| ["Reveal", [chest_key, nat]];
+    ["Reset", [address, address]] 
+  | ["Play", chest] 
+  | ["Reveal", [chest_key, nat]];
 
-export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
+export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
     const new_storage = match(parameter, {
-        Reset : (p:[address,adress]) => Storage.new_game(storage, p[0], p[1]),
-        Play : (p:chest) => Storage.play(storage, Tezos.sender, p),
-        Reveal : (p:[chest_key, nat]) => Storage.reveal(storage, Tezos.sender, p[0], p[1]),
+        Reset  : p => Storage.new_game(storage, p[0], p[1]),
+        Play   : p => Storage.play(storage, Tezos.sender, p),
+        Reveal : p => Storage.reveal(storage, Tezos.sender, p[0], p[1]),
     });
     return [list([]) as list<operation>, new_storage];
 };
 ```
+
+# V3
+
+Time to Bet!
+
+In this third version each player should engage 1tez each time they decide to play an action.
+

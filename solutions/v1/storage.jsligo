@@ -1,0 +1,94 @@
+#import "errors.jsligo" "Errors"
+#import "action.jsligo" "Action"
+
+type round_value = 
+    ["Waiting"] | ["Played", Action.t];
+
+const is_waiting = (r:round_value) : bool => {
+    return match(r, {
+        Waiting: () => true,
+        Played: _p => false
+    });
+};
+
+const is_played = (r:round_value) : bool => {
+    return match(r, {
+        Waiting: () => false,
+        Played: _p => true,
+    });
+};
+
+type round = {
+    player1 : round_value,
+    player2 : round_value
+};
+
+export type t = {
+    round : nat,
+    player1 : address,
+    player2 : address,
+    rounds : map<nat, round>,
+};
+
+export const fresh_round : round = ({
+    player1: Waiting (),
+    player2: Waiting ()
+});
+
+export const fresh_game = (p1:address, p2:address) : t => {
+    return ({ 
+        round   : 0 as nat,
+        player1 : p1,
+        player2 : p2,
+        rounds  : Map.literal(list([ [0 as nat, fresh_round] ]))
+    });
+};
+
+const new_game = (storage:t) : t => {
+    const new_round = storage.round + (1 as nat);
+    return ({ 
+        ...storage,
+        round : new_round,
+        rounds : Map.update(new_round, Some(fresh_round), storage.rounds)
+    });
+};
+  
+const play_round = (action:Action.t,round_value:round_value) : round_value => {
+    return match(round_value, {
+        Waiting: () => Played(action),
+        Played: _p => failwith(Errors.user_already_played),
+    });
+};
+
+export const play = ([storage, player, action]:[t, address, Action.t]) : t => {
+    const new_round : round = match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: (r:round) => {
+            if (storage.player1 == player) {
+                return { ...r, player1: play_round(action, r.player1) };
+            } else if (storage.player2 == player) {
+                return { ...r, player2: play_round(action, r.player2) };
+            } else {
+                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
+            };
+        }
+    });
+
+    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
+
+    return { ...storage, rounds: rounds };    
+};
+
+
+export const conclude = (storage:t): [list<operation>, t] => {
+    return match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: r => {
+            if (is_played(r.player1) && is_played(r.player1)) {
+                return [list([]) as list<operation>, new_game(storage)];
+            } else {
+                return [list([]) as list<operation>, storage];
+            }
+        }
+    });
+}
