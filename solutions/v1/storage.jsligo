@@ -80,7 +80,7 @@ export const player2_play = (round:round, action:Action.t) : round => {
     return { ...round, player2: play_round(action, round.player2) };
 };
 
-export const modify_round = (storage: t, round: round): t => {
+export const update_round = (storage: t, round: round): t => {
     const rounds = Map.update(storage.round, Some(round), storage.rounds);
     return { ...storage, rounds: rounds };    
 };

@@ -121,7 +121,7 @@ export const player2_reveal = (round:round, chest_key:chest_key, secret:nat) : r
     return { ...round, player2: reveal_round(chest_key, secret, round.player2) };
 };
 
-export const modify_round = (storage: t, round: round): t => {
+export const update_round = (storage: t, round: round): t => {
     const rounds = Map.update(storage.round, Some(round), storage.rounds);
     return { ...storage, rounds: rounds };    
 };
