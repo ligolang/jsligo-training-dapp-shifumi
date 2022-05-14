@@ -1,8 +1,7 @@
 #import "errors.jsligo" "Errors"
 #import "action.jsligo" "Action"
 
-type round_value = 
-    ["Waiting"] | ["Played", Action.t];
+type round_value = ["Waiting"] | ["Played", Action.t];
 
 const is_waiting = (r:round_value) : bool => {
     return match(r, {

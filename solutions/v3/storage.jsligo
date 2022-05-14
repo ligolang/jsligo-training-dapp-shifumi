@@ -1,13 +1,12 @@
 #import "errors.jsligo" "Errors"
 #import "action.jsligo" "Action"
 
-type round_value = 
-    ["Waiting"] | ["Played", chest] | ["Revealed", Action.t];
+type round_value = ["Waiting"] | ["Played", chest, tez] | ["Revealed", Action.t, tez];
 
 
 export type round = {
-    player1 : [round_value,tez],
-    player2 : [round_value,tez]
+    player1 : round_value,
+    player2 : round_value
 };
 
 export type t = {
@@ -18,8 +17,8 @@ export type t = {
 };
 
 const fresh_round : round = ({ 
-    player1 : [Waiting (),0 as tez],
-    player2 : [Waiting (),0 as tez]
+    player1 : Waiting (),
+    player2 : Waiting ()
 });
 
 const is_waiting = (r:round_value) : bool => {
@@ -83,9 +82,9 @@ const decode_action = (payload: bytes): Action.t => {
     });
 };
 
-const play_round = ([chest, round_value]:[chest, round_value]) : round_value => {
+const play_round = ([chest, round_value, amount]:[chest, round_value, tez]) : round_value => {
     return match(round_value, {
-        Waiting: () => Played(chest),
+        Waiting: () => Played([chest,amount]),
         Played: p => Played(p),
         Revealed : p => Revealed(p),
     });
@@ -94,7 +93,7 @@ const play_round = ([chest, round_value]:[chest, round_value]) : round_value => 
 const reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_value]) : round_value => {
     return match(round_value, {
         Waiting: () => Waiting (),
-        Played: p => Revealed(decode_action(decode_chest(chest_key, p, secret))),
+        Played: p => Revealed([decode_action(decode_chest(chest_key, p[0], secret)),p[1]]),
         Revealed : p => Revealed(p)
     });
 };
@@ -107,19 +106,19 @@ export const current_round = (storage: t) : round => {
 };
 
 export const player1_play = (round:round, action:chest, amount:tez) : round => {
-    return { ...round, player1: [play_round(action, round.player1[0]), amount] };
+    return { ...round, player1: play_round(action, round.player1, amount) };
 };
 
 export const player2_play = (round:round, action:chest, amount:tez) : round => {
-    return { ...round, player2: [play_round(action, round.player2[0]), amount] };
+    return { ...round, player2: play_round(action, round.player2, amount) };
 };
 
 export const player1_reveal = (round:round, chest_key:chest_key, secret:nat) : round => {
-    return { ...round, player1: [reveal_round(chest_key, secret, round.player1[0]), round.player1[1]] };
+    return { ...round, player1: reveal_round(chest_key, secret, round.player1) };
 };
 
 export const player2_reveal = (round:round, chest_key:chest_key, secret:nat) : round => {
-    return { ...round, player2: [reveal_round(chest_key, secret, round.player2[0]), round.player2[1]] };
+    return { ...round, player2: reveal_round(chest_key, secret, round.player2) };
 };
 
 export const modify_round = (storage: t, round: round): t => {
@@ -127,7 +126,7 @@ export const modify_round = (storage: t, round: round): t => {
     return { ...storage, rounds: rounds };    
 };
 
-export const revealed = (r1:round_value,r2:round_value) : option<{player1:Action.t,player2:Action.t}> => {
+export const revealed = (r1:round_value,r2:round_value) : option<{player1:[Action.t,tez],player2:[Action.t,tez]}> => {
     match(r1, {
         Waiting: () => None (),
         Played: _p => None (),

@@ -9,9 +9,9 @@ const play = ([storage, player, action, amount]:[Storage.t, address, chest, tez]
 
     const round = Storage.current_round(storage);
 
-    if (Storage.is_player1(storage, player) && Storage.is_waiting(round.player1[0])) {
+    if (Storage.is_player1(storage, player) && Storage.is_waiting(round.player1)) {
         return [list([]) as list<operation>, Storage.modify_round(storage, Storage.player1_play(round, action, amount))];
-    } else if (Storage.is_player2(storage, player) && Storage.is_waiting(round.player2[0])) {
+    } else if (Storage.is_player2(storage, player) && Storage.is_waiting(round.player2)) {
         return [list([]) as list<operation>, Storage.modify_round(storage, Storage.player2_play(round, action, amount))];
     } else {
         return failwith(Errors.user_not_allowed_to_play);
@@ -21,11 +21,11 @@ const play = ([storage, player, action, amount]:[Storage.t, address, chest, tez]
 const reveal = ([storage, player, chest_key, secret]:[Storage.t, address, chest_key, nat]) : Storage.t => {
     const round = Storage.current_round(storage);
 
-    if (Storage.is_waiting(round.player1[0]) || Storage.is_waiting(round.player2[0])) {
+    if (Storage.is_waiting(round.player1) || Storage.is_waiting(round.player2)) {
         return (failwith(Errors.user_not_allowed_to_reveal));
-    } else if (Storage.is_player1(storage, player) && Storage.is_played(round.player1[0])) {
+    } else if (Storage.is_player1(storage, player) && Storage.is_played(round.player1)) {
         return Storage.modify_round(storage, Storage.player1_reveal(round, chest_key, secret));
-    } else if (Storage.is_player2(storage, player) && Storage.is_played(round.player2[0])) {
+    } else if (Storage.is_player2(storage, player) && Storage.is_played(round.player2)) {
         return Storage.modify_round(storage, Storage.player2_reveal(round, chest_key, secret));
     } else {
         return failwith(Errors.user_not_allowed_to_reveal);
@@ -38,23 +38,23 @@ const conclude = (storage:Storage.t): [list<operation>,Storage.t] => {
     const player1 = round.player1;
     const player2 = round.player2;
 
-    match(Storage.revealed(player1[0],player2[0]), {
+    match(Storage.revealed(player1,player2), {
         None: () => 
             [ list([]) as list<operation>, storage ],
         Some: actions => {
-            if (Action.win_against(actions.player1, actions.player2)) {
+            if (Action.win_against(actions.player1[0], actions.player2[0])) {
                 return [
                     list([
-                        Tezos.transaction(unit, player1[1] + player2[1], Tezos.get_contract(storage.player1) as contract<unit>)
+                        Tezos.transaction(unit, actions.player1[1] + actions.player2[1], Tezos.get_contract(storage.player1) as contract<unit>)
                     ]),
                     Storage.new_game(storage)
                 ];
             };
             
-            if (Action.win_against(actions.player2, actions.player1)) {
+            if (Action.win_against(actions.player2[0], actions.player1[0])) {
                 return [
                     list([
-                        Tezos.transaction(unit, player1[1] + player2[1], Tezos.get_contract(storage.player2) as contract<unit>)
+                        Tezos.transaction(unit, actions.player1[1] + actions.player2[1], Tezos.get_contract(storage.player2) as contract<unit>)
                     ]),
                     Storage.new_game(storage)
                 ];
@@ -63,8 +63,8 @@ const conclude = (storage:Storage.t): [list<operation>,Storage.t] => {
             // Draw
             return [
                 list([                                    
-                    Tezos.transaction(unit, player1[1], Tezos.get_contract(storage.player1) as contract<unit>),
-                    Tezos.transaction(unit, player2[1], Tezos.get_contract(storage.player2) as contract<unit>)
+                    Tezos.transaction(unit, actions.player1[1], Tezos.get_contract(storage.player1) as contract<unit>),
+                    Tezos.transaction(unit, actions.player2[1], Tezos.get_contract(storage.player2) as contract<unit>)
                 ]),
                 Storage.new_game(storage)
             ];

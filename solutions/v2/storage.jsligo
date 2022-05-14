@@ -1,8 +1,7 @@
 #import "errors.jsligo" "Errors"
 #import "action.jsligo" "Action"
 
-type round_value = 
-    ["Waiting"] | ["Played", chest] | ["Revealed", Action.t];
+type round_value = ["Waiting"] | ["Played", chest] | ["Revealed", Action.t];
 
 
 export type round = {
