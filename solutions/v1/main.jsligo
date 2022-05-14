@@ -3,35 +3,25 @@
 #import "storage.jsligo" "Storage"
 
 const play = (storage:Storage.t, player:address, action: Action.t) : Storage.t => {
-    const new_round : Storage.round = match(Map.find_opt(storage.round, storage.rounds), {
-        None: () => failwith(Errors.invalid_round),
-        Some: r => {
-            if (storage.player1 == player) {
-                return { ...r, player1: Storage.play_round(action, r.player1) };
-            } else if (storage.player2 == player) {
-                return { ...r, player2: Storage.play_round(action, r.player2) };
-            } else {
-                return (failwith(Errors.user_not_allowed_to_play_or_reveal));
-            };
-        }
-    });
+    const round = Storage.current_round(storage);
 
-    const rounds = Map.update(storage.round, Some(new_round), storage.rounds);
-
-    return { ...storage, rounds: rounds };    
+    if (Storage.is_player1(storage, player) && Storage.is_waiting(round.player1)) {
+        return Storage.modify_round(storage, Storage.player1_play(round, action));
+    } else if (Storage.is_player2(storage, player) && Storage.is_waiting(round.player2)) {
+        return Storage.modify_round(storage, Storage.player2_play(round, action));
+    } else {
+        return (failwith(Errors.user_not_allowed_to_play));
+    };
 };
 
 const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
-    return match(Map.find_opt(storage.round, storage.rounds), {
-        None: () => failwith(Errors.invalid_round),
-        Some: r => {
-            if (Storage.is_played(r.player1) && Storage.is_played(r.player2)) {
-                return [list([]) as list<operation>, Storage.new_game(storage)];
-            } else {
-                return [list([]) as list<operation>, storage];
-            }
-        }
-    });
+    const round = Storage.current_round(storage);
+
+    if (Storage.is_played(round.player1) && Storage.is_played(round.player2)) {
+        return [list([]) as list<operation>, Storage.new_game(storage)];
+    } else {
+        return [list([]) as list<operation>, storage];
+    }
 };
 
 export type parameter = | ["Play", Action.t];

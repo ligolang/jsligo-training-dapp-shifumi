@@ -4,6 +4,7 @@
 type round_value = 
     ["Waiting"] | ["Played", chest] | ["Revealed", Action.t];
 
+
 export type round = {
     player1 : [round_value,tez],
     player2 : [round_value,tez]
@@ -17,8 +18,8 @@ export type t = {
 };
 
 const fresh_round : round = ({ 
-    player1 : [Waiting (), 0 as tez],
-    player2 : [Waiting (), 0 as tez]
+    player1 : [Waiting (),0 as tez],
+    player2 : [Waiting (),0 as tez]
 });
 
 const is_waiting = (r:round_value) : bool => {
@@ -45,26 +46,18 @@ const is_revealed = (r:round_value) : bool => {
     })
 };
 
-const revealed = (r1:round_value,r2:round_value) : option<{player1:Action.t,player2:Action.t}> => {
-    match(r1, {
-        Waiting: () => None (),
-        Played: _p => None (),
-        Revealed: p1 => {
-            match(r2, {
-                Waiting: () => None (),
-                Played: _p => None (),
-                Revealed: p2 => Some ({player1:p1, player2:p2})
-            })
-        }
-    })
-};
-
 export const fresh_game = (p1:address, p2:address) : t => ({
     round   : 0 as nat,
     player1 : p1,
     player2 : p2,
     rounds  : Map.literal(list([ [0 as nat, fresh_round] ]))
 });
+
+export const is_player1 = (storage:t, player:address) : bool => 
+    (storage.player1 == player);
+
+export const is_player2 = (storage:t, player:address) : bool => 
+    (storage.player2 == player);
 
 export const new_game = (storage:t) : t => {
     const new_round = storage.round + (1 as nat);
@@ -93,16 +86,57 @@ const decode_action = (payload: bytes): Action.t => {
 const play_round = ([chest, round_value]:[chest, round_value]) : round_value => {
     return match(round_value, {
         Waiting: () => Played(chest),
-        Played: (chest:chest) => failwith(Errors.user_already_played),
-        Revealed : (_:action) => failwith(Errors.user_already_revealed),
+        Played: p => Played(p),
+        Revealed : p => Revealed(p),
     });
 };
 
 const reveal_round = ([chest_key, secret, round_value]:[chest_key, nat, round_value]) : round_value => {
     return match(round_value, {
-        Waiting: () => failwith(Errors.missing_sender_chest),
-        Played: (chest:chest) => Revealed(decode_action(decode_chest(chest_key, chest, secret))),
-        Revealed : (_:action) => failwith(Errors.user_already_revealed),
+        Waiting: () => Waiting (),
+        Played: p => Revealed(decode_action(decode_chest(chest_key, p, secret))),
+        Revealed : p => Revealed(p)
     });
 };
 
+export const current_round = (storage: t) : round => {
+    return match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: r  => r
+    });
+};
+
+export const player1_play = (round:round, action:chest, amount:tez) : round => {
+    return { ...round, player1: [play_round(action, round.player1[0]), amount] };
+};
+
+export const player2_play = (round:round, action:chest, amount:tez) : round => {
+    return { ...round, player2: [play_round(action, round.player2[0]), amount] };
+};
+
+export const player1_reveal = (round:round, chest_key:chest_key, secret:nat) : round => {
+    return { ...round, player1: [reveal_round(chest_key, secret, round.player1[0]), round.player1[1]] };
+};
+
+export const player2_reveal = (round:round, chest_key:chest_key, secret:nat) : round => {
+    return { ...round, player2: [reveal_round(chest_key, secret, round.player2[0]), round.player2[1]] };
+};
+
+export const modify_round = (storage: t, round: round): t => {
+    const rounds = Map.update(storage.round, Some(round), storage.rounds);
+    return { ...storage, rounds: rounds };    
+};
+
+export const revealed = (r1:round_value,r2:round_value) : option<{player1:Action.t,player2:Action.t}> => {
+    match(r1, {
+        Waiting: () => None (),
+        Played: _p => None (),
+        Revealed: p1 => {
+            match(r2, {
+                Waiting: () => None (),
+                Played: _p => None (),
+                Revealed: p2 => Some ({player1:p1, player2:p2})
+            })
+        }
+    })
+};

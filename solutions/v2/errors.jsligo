@@ -1,7 +1,6 @@
 export const invalid_round : string = "Invalid round";
-export const user_not_allowed_to_play_or_reveal : string = "User not allowed to play or reveal";
-export const user_not_allowed_to_reveal : string = "Not allowed to reveal this round";
-export const user_already_played : string = "You already have played for this round";
+export const user_not_allowed_to_play : string = "User not allowed to play";
+export const user_not_allowed_to_reveal : string = "User not allowed to reveal";
 export const missing_all_chests : string = "no actions registered";
 export const missing_sender_chest : string = "user has not played";
 export const failed_to_open_chest : string = "Failed to open chest";

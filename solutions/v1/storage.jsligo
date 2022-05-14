@@ -44,6 +44,12 @@ export const fresh_game = (p1:address, p2:address) : t => {
     });
 };
 
+export const is_player1 = (storage:t, player:address) : bool => 
+    (storage.player1 == player);
+
+export const is_player2 = (storage:t, player:address) : bool => 
+    (storage.player2 == player);
+
 const new_game = (storage:t) : t => {
     const new_round = storage.round + (1 as nat);
     return ({ 
@@ -53,9 +59,29 @@ const new_game = (storage:t) : t => {
     });
 };
   
-export const play_round = (action:Action.t,round_value:round_value) : round_value => {
+export const play_round = (action:Action.t, round_value:round_value) : round_value => {
     return match(round_value, {
         Waiting: () => Played(action),
-        Played: _p => failwith(Errors.user_already_played),
+        Played: p => Played(p)
     });
+};
+
+export const current_round = (storage: t) : round => {
+    return match(Map.find_opt(storage.round, storage.rounds), {
+        None: () => failwith(Errors.invalid_round),
+        Some: r  => r
+    });
+};
+
+export const player1_play = (round:round, action:Action.t) : round => {
+    return { ...round, player1: play_round(action, round.player1) };
+};
+
+export const player2_play = (round:round, action:Action.t) : round => {
+    return { ...round, player2: play_round(action, round.player2) };
+};
+
+export const modify_round = (storage: t, round: round): t => {
+    const rounds = Map.update(storage.round, Some(round), storage.rounds);
+    return { ...storage, rounds: rounds };    
 };

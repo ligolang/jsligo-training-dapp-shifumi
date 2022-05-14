@@ -55,7 +55,7 @@ const alice_play_twice = () : string => {
     const result = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
     
     // Then
-    Assert.assert_string_failure(result, Errors.user_already_played);
+    Assert.assert_string_failure(result, Errors.user_not_allowed_to_play);
 
     return "✅";
 };
@@ -166,7 +166,7 @@ const james_cannot_play = () : string => {
     const result = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
 
     // Then
-    Assert.assert_string_failure(result, Errors.user_not_allowed_to_play_or_reveal)
+    Assert.assert_string_failure(result, Errors.user_not_allowed_to_play)
     
     return "✅";
 };
