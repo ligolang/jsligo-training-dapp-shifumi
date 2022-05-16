@@ -72,6 +72,14 @@ export const current_round = (storage: t) : round => {
     });
 };
 
+export const round_value_player1 = (round: round) : round_value => {
+    return round.player1;
+};
+
+export const round_value_player2 = (round: round) : round_value => {
+    return round.player2;
+};
+
 export const player1_play = (round:round, action:Action.t) : round => {
     return { ...round, player1: play_round(action, round.player1) };
 };

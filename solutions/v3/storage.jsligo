@@ -105,6 +105,14 @@ export const current_round = (storage: t) : round => {
     });
 };
 
+export const round_value_player1 = (round: round) : round_value => {
+    return round.player1;
+};
+
+export const round_value_player2 = (round: round) : round_value => {
+    return round.player2;
+};
+
 export const player1_play = (round:round, action:chest, amount:tez) : round => {
     return { ...round, player1: play_round(action, round.player1, amount) };
 };
@@ -124,6 +132,14 @@ export const player2_reveal = (round:round, chest_key:chest_key, secret:nat) : r
 export const update_round = (storage: t, round: round): t => {
     const rounds = Map.update(storage.round, Some(round), storage.rounds);
     return { ...storage, rounds: rounds };    
+};
+
+export const address_player1 = (storage: t) : address => {
+    return storage.player1;
+};
+
+export const address_player2 = (storage: t) : address => {
+    return storage.player2;
 };
 
 export const revealed = (r1:round_value,r2:round_value) : option<{player1:[Action.t,tez],player2:[Action.t,tez]}> => {

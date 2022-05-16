@@ -5,9 +5,11 @@
 const play = (storage:Storage.t, player:address, action: Action.t) : Storage.t => {
     const round = Storage.current_round(storage);
 
-    if (Storage.is_player1(storage, player) && Storage.is_waiting(round.player1)) {
+    if (Storage.is_player1(storage, player) && 
+        Storage.is_waiting(Storage.round_value_player1(round))) {
         return Storage.update_round(storage, Storage.player1_play(round, action));
-    } else if (Storage.is_player2(storage, player) && Storage.is_waiting(round.player2)) {
+    } else if (Storage.is_player2(storage, player) && 
+               Storage.is_waiting(Storage.round_value_player2(round))) {
         return Storage.update_round(storage, Storage.player2_play(round, action));
     } else {
         return failwith(Errors.user_not_allowed_to_play);
@@ -17,7 +19,8 @@ const play = (storage:Storage.t, player:address, action: Action.t) : Storage.t =
 const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
     const round = Storage.current_round(storage);
 
-    if (Storage.is_played(round.player1) && Storage.is_played(round.player2)) {
+    if (Storage.is_played(Storage.round_value_player1(round)) && 
+        Storage.is_played(Storage.round_value_player2(round))) {
         return [list([]) as list<operation>, Storage.new_game(storage)];
     } else {
         return [list([]) as list<operation>, storage];
