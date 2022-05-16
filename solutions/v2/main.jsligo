@@ -18,7 +18,7 @@ export const reveal = ([storage, player, chest_key, secret]:[Storage.t, address,
     const round = Storage.current_round(storage);
 
     if (Storage.is_waiting(round.player1) || Storage.is_waiting(round.player2)) {
-        return (failwith(Errors.user_not_allowed_to_reveal));
+        return failwith(Errors.user_not_allowed_to_reveal);
     } else if (Storage.is_player1(storage, player) && Storage.is_played(round.player1)) {
         return Storage.update_round(storage, Storage.player1_reveal(round, chest_key, secret));
     } else if (Storage.is_player2(storage, player) && Storage.is_played(round.player2)) {

@@ -10,7 +10,7 @@ const play = (storage:Storage.t, player:address, action: Action.t) : Storage.t =
     } else if (Storage.is_player2(storage, player) && Storage.is_waiting(round.player2)) {
         return Storage.update_round(storage, Storage.player2_play(round, action));
     } else {
-        return (failwith(Errors.user_not_allowed_to_play));
+        return failwith(Errors.user_not_allowed_to_play);
     };
 };
 
