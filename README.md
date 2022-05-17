@@ -36,8 +36,8 @@ sequenceDiagram
   participant Player1
   participant SM
   participant Player2
-  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
-  Note right of Player2: Prepare chest(stone|paper|cisor, secret)
+  Note left of Player1: Prepare action(stone|paper|cisor, secret)
+  Note right of Player2: Prepare action(stone|paper|cisor, secret)
   Player1->>SM: action
   Player2->>SM: action
 ```
@@ -153,12 +153,12 @@ sequenceDiagram
   participant Player1
   participant SM
   participant Player2
-  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
-  Note right of Player2: Prepare chest(stone|paper|cisor, secret)
-  Player1->>SM: chest
-  Player2->>SM: chest
-  Player1->>SM: chest_key, secret
-  Player2->>SM: chest_key, secret
+  Note left of Player1: Prepare action(stone|paper|cisor, secret)
+  Note right of Player2: Prepare action(stone|paper|cisor, secret)
+  Player1->>SM: chest(action)
+  Player2->>SM: chest(action)
+  Player1->>SM: reveal
+  Player2->>SM: reveal
 ```
 
 ## Prohibited sequences
@@ -169,9 +169,9 @@ sequenceDiagram
 sequenceDiagram
   participant Player1
   participant SM
-  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
-  Player1->>SM: chest
-  Player1-xSM: chest_key, secret
+  Note left of Player1: Prepare action(stone|paper|cisor, secret)
+  Player1->>SM: chest(action)
+  Player1-xSM: reveal
 ```
 
 ### Cannot play twice
@@ -180,9 +180,9 @@ sequenceDiagram
 sequenceDiagram
   participant Player1
   participant SM
-  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
-  Player1->>SM: chest
-  Player1-xSM: chest
+  Note left of Player1: Prepare action(stone|paper|cisor, secret)
+  Player1->>SM: chest(action)
+  Player1-xSM: chest(action)
 ```
 
 ### Cannot reveal twice
@@ -192,12 +192,12 @@ sequenceDiagram
   participant Player1
   participant SM
   participant Player2
-  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
-  Note right of Player2: Prepare chest(stone|paper|cisor, secret)
-  Player1->>SM: chest
-  Player2->>SM: chest
-  Player1->>SM: chest_key, secret
-  Player1-xSM: chest_key, secret
+  Note left of Player1: Prepare action(stone|paper|cisor, secret)
+  Note right of Player2: Prepare action(stone|paper|cisor, secret)
+  Player1->>SM: chest(action)
+  Player2->>SM: chest(action)
+  Player1->>SM: reveal
+  Player1-xSM: reveal
 ```
 
 ## Smart contract
