@@ -101,7 +101,7 @@ const alice_play_bob_play = () : string => {
 
     // When
     Test.set_source(bob.address);
-    const material_bob = get_play(Cisor(), bob.secret);
+    const material_bob = get_play(Scissor(), bob.secret);
     const result = Test.transfer_to_contract(contract, Play(material_bob[0]), 0 as tez);
   
     // Then
@@ -118,7 +118,7 @@ const alice_play_bob_play_alice_reveal = () : string => {
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
 
     Test.set_source(bob.address);
-    const material_bob = get_play(Cisor(), bob.secret);
+    const material_bob = get_play(Scissor(), bob.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 0 as tez);
 
     // When
@@ -139,7 +139,7 @@ const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
 
     Test.set_source(bob.address);
-    const material_bob = get_play(Cisor(), bob.secret);
+    const material_bob = get_play(Scissor(), bob.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 0 as tez);
 
     Test.set_source(alice.address);

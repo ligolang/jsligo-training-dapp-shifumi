@@ -33,7 +33,7 @@ Please install this software first on your machine or use online alternative :
 
 > We propose an implementation for only two players in order to simplify some algorithms.
 
-The gameplay is simple. Each player choose to play `stone` or `paper` or `cisor` and that's all!
+The gameplay is simple. Each player choose to play `stone` or `paper` or `scissor` and that's all!
 
 ## Nominal sequence diagram
 
@@ -42,8 +42,8 @@ sequenceDiagram
   participant Player1
   participant SM
   participant Player2
-  Note left of Player1: Prepare action(stone|paper|cisor, secret)
-  Note right of Player2: Prepare action(stone|paper|cisor, secret)
+  Note left of Player1: Prepare action(stone|paper|scissor, secret)
+  Note right of Player2: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: action
   Player2->>SM: action
 ```
@@ -56,7 +56,7 @@ sequenceDiagram
 sequenceDiagram
   participant Player1
   participant SM
-  Note left of Player1: Prepare chest(stone|paper|cisor, secret)
+  Note left of Player1: Prepare chest(stone|paper|scissor, secret)
   Player1->>SM: action
   Player1-xSM: action'
 ```
@@ -77,7 +77,7 @@ Add the `Storage` namespace, the parameter type and finally the `main` function.
 
 ```ligo
 export namespace Storage {
-    export type action = ["Stone"] | ["Paper"] | ["Cisor"];
+    export type action = ["Stone"] | ["Paper"] | ["Scissor"];
 
     export type t = unit;
 
@@ -140,7 +140,7 @@ export type parameter = ["Reset", address, address] | ["Play", action];
 
 # V2 A fair game!
 
-The gameplay is done in two stages. The first one each player choose to play `stone` or `paper` or `cisor`
+The gameplay is done in two stages. The first one each player choose to play `stone` or `paper` or `scissor`
 and cipher it thanks to the `chest` functionality provided by the Tezos protocol.
 
 > [Chest in Tezos]()
@@ -155,8 +155,8 @@ sequenceDiagram
   participant Player1
   participant SM
   participant Player2
-  Note left of Player1: Prepare action(stone|paper|cisor, secret)
-  Note right of Player2: Prepare action(stone|paper|cisor, secret)
+  Note left of Player1: Prepare action(stone|paper|scissor, secret)
+  Note right of Player2: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action)
   Player2->>SM: chest(action)
   Player1->>SM: reveal
@@ -171,7 +171,7 @@ sequenceDiagram
 sequenceDiagram
   participant Player1
   participant SM
-  Note left of Player1: Prepare action(stone|paper|cisor, secret)
+  Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action)
   Player1-xSM: reveal
 ```
@@ -182,7 +182,7 @@ sequenceDiagram
 sequenceDiagram
   participant Player1
   participant SM
-  Note left of Player1: Prepare action(stone|paper|cisor, secret)
+  Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action)
   Player1-xSM: chest(action)
 ```
@@ -194,8 +194,8 @@ sequenceDiagram
   participant Player1
   participant SM
   participant Player2
-  Note left of Player1: Prepare action(stone|paper|cisor, secret)
-  Note right of Player2: Prepare action(stone|paper|cisor, secret)
+  Note left of Player1: Prepare action(stone|paper|scissor, secret)
+  Note right of Player2: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action)
   Player2->>SM: chest(action)
   Player1->>SM: reveal
@@ -218,7 +218,7 @@ Add the `Storage` namespace, the parameter type and finally the `main` function.
 
 ```ligo
 export namespace Storage {
-    export type action = ["Stone"] | ["Paper"] | ["Cisor"];
+    export type action = ["Stone"] | ["Paper"] | ["Scissor"];
 
     export type t = unit;
 

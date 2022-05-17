@@ -62,7 +62,7 @@ const alice_play_bob_play = () : string => {
 
     // When
     Test.set_source(bob.address);
-    const material_bob = Cisor();
+    const material_bob = Scissor();
     const result = Test.transfer_to_contract(contract, Play(material_bob), 0 as tez);
   
     // Then

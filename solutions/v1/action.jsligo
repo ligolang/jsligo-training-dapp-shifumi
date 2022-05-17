@@ -1,11 +1,13 @@
 export type t = 
-    ["Stone"] | ["Paper"] | ["Cisor"];
+| ["Stone"] 
+| ["Paper"] 
+| ["Scissor"];
 
 const is_stone = (a:t) : bool => {
     match(a, {
         Stone: () => true,
         Paper: () => false,
-        Cisor: () => false,
+        Scissor: () => false,
     })
 };
 
@@ -13,7 +15,7 @@ const is_paper = (a:t) : bool => {
     match(a, {
         Stone: () => false,
         Paper: () => true,
-        Cisor: () => false,
+        Scissor: () => false,
     })
 };
 
@@ -21,7 +23,7 @@ const is_cisor = (a:t) : bool => {
     match(a, {
         Stone: () => false,
         Paper: () => false,
-        Cisor: () => true,
+        Scissor: () => true,
     })
 };
 
