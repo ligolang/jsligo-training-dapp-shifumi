@@ -1,0 +1,2 @@
+export const invalid_round : string = "Invalid round";
+export const user_not_allowed_to_play : string = "User not allowed to play";

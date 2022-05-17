@@ -1,26 +1,15 @@
 #import "action.jsligo" "Action"
 
-export type t = 
-| ["Waiting"] 
-| ["Played", Action.t];
+export type t = unit;
 
 export const is_waiting = (round_value:t) : bool => {
-    return match(round_value, {
-        Waiting: () => true,
-        Played: _p => false
-    });
+    failwith("Predicate checking if the round_value is waiting");
 };
 
 export const is_played = (round_value:t) : bool => {
-    return match(round_value, {
-        Waiting: () => false,
-        Played: _p => true,
-    });
+    failwith("Predicate checking if the round_value is waiting");
 };
 
 export const play = (round_value:t, action:Action.t) : t => {
-    return match(round_value, {
-        Waiting: () => Played(action),
-        Played: p => Played(p)
-    });
+    failwith("Should provide a play action for a given round_value and action");
 };

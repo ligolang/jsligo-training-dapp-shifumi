@@ -1,0 +1,53 @@
+#import "player.jsligo" "Player"
+#import "action.jsligo" "Action"
+#import "round_value.jsligo" "RoundValue"
+#import "round.jsligo" "Round"
+
+export type t = {
+    round   : nat,
+    players : [address,address],
+    rounds  : map<nat, Round.t>,
+};
+
+export const fresh_game = (p1:address, p2:address) : t => {
+    return ({ 
+        round   : 0 as nat,
+        players : [p1, p2],
+        rounds  : Map.literal(list([ [0 as nat, Round.fresh_round ] ]))
+    });
+};
+
+const new_game = (storage:t) : t => {
+    const new_round = storage.round + (1 as nat);
+    return ({ 
+        ...storage,
+        round : new_round,
+        rounds : Map.update(new_round, Some(Round.fresh_round), storage.rounds)
+    });
+};
+
+export const get_player = (storage:t, player:address) : option<Player.t> => {
+    if (storage.players[0] == player) {
+        return Some (Player1());    
+    } else if (storage.players[1] == player) {
+        return Some (Player2());
+    } else {
+        return None ();
+    }
+};
+
+export const get_current_round = (storage: t) : option<Round.t> => {
+    return Map.find_opt(storage.round, storage.rounds);
+};
+
+export const update_round = (storage: t, round: Round.t): t => {
+    const rounds = Map.update(storage.round, Some(round), storage.rounds);
+    return { ...storage, rounds: rounds };    
+};
+
+export const get_address = (storage: t, player: Player.t): address => {
+    return match(player, {
+        Player1: () => storage.players[0],
+        Player2: () => storage.players[1]
+    });
+};

@@ -1,0 +1,83 @@
+#import "../common/options.jsligo" "Options"
+#import "errors.jsligo" "Errors"
+#import "action.jsligo" "Action"
+#import "round_value.jsligo" "RoundValue"
+#import "round.jsligo" "Round"
+#import "storage.jsligo" "Storage"
+
+const play = (storage: Storage.t, player_address:address, action: chest, amount:tez) : [list<operation>, Storage.t] => {
+    if (amount != (1 as tez)) {
+        failwith(Errors.bet_mount_required);
+    };
+
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+    const player = Options.get_exn(Storage.get_player(storage, player_address), Errors.user_not_allowed_to_play);
+
+    if (RoundValue.is_waiting(Round.get_round_value(round, player))) {
+        return [list([]) as list<operation>, Storage.update_round(storage, Round.play(round, player, action, amount))];
+    } else {
+        return failwith(Errors.user_not_allowed_to_play);
+    };
+};
+
+
+export const reveal = (storage: Storage.t, player_address:address, chest_key:chest_key, secret:nat) : Storage.t => {
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+    const player = Options.get_exn(Storage.get_player(storage, player_address), Errors.user_not_allowed_to_play);
+
+    if (RoundValue.is_waiting(Round.get_round_value(round, Player1())) || 
+        RoundValue.is_waiting(Round.get_round_value(round, Player2()))) {
+        return failwith(Errors.user_not_allowed_to_reveal);
+    } else if (RoundValue.is_played(Round.get_round_value(round, player))) {
+        return Storage.update_round(storage, Round.reveal(round, player, chest_key, secret));
+    } else {
+        return failwith(Errors.user_not_allowed_to_reveal);
+    };
+};
+
+const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+    const round_value_player1 = Round.get_round_value(round, Player1());
+    const round_value_player2 = Round.get_round_value(round, Player2());
+
+    match(RoundValue.get_revealed(round_value_player1,round_value_player2), {
+        None: () => 
+            [ list([]) as list<operation>, storage ],
+        Some: actions => {
+            if (Action.win_against(actions.player1[0], actions.player2[0])) {
+                const gain = actions.player1[1] + actions.player2[1];
+                const who = Tezos.get_contract(Storage.get_address(storage, Player1())) as contract<unit>;
+                return [
+                    list([Tezos.transaction(unit, gain, who)]),
+                    Storage.new_game(storage)
+                ];
+            };
+            
+            if (Action.win_against(actions.player2[0], actions.player1[0])) {
+                const gain = actions.player1[1] + actions.player2[1];
+                const who = Tezos.get_contract(Storage.get_address(storage, Player2())) as contract<unit>;
+                return [
+                    list([Tezos.transaction(unit, gain, who)]),
+                    Storage.new_game(storage)
+                ];
+            };
+            
+            return [
+                list([                                    
+                    Tezos.transaction(unit, actions.player1[1], Tezos.get_contract(Storage.get_address(storage, Player1())) as contract<unit>),
+                    Tezos.transaction(unit, actions.player2[1], Tezos.get_contract(Storage.get_address(storage, Player2())) as contract<unit>)
+                ]),
+                Storage.new_game(storage)
+            ];
+        }
+    });
+};
+
+export type parameter = ["Play", chest] | ["Reveal", chest_key, nat];
+
+export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
+    return match(parameter, {
+        Play   : p => play(storage, Tezos.sender, p, Tezos.amount),
+        Reveal : p => conclude(reveal(storage, Tezos.sender, p[0], p[1])),
+    });
+};

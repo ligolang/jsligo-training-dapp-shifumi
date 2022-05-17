@@ -2,20 +2,14 @@
 #import "action.jsligo" "Action"
 #import "round_value.jsligo" "RoundValue"
 
-export type t = [RoundValue.t, RoundValue.t];
+export type t = unit;
 
-const fresh_round = [Waiting(), Waiting()];
+const fresh_round = unit;
 
 export const get_round_value = (round:t, player:Player.t) : RoundValue.t => {
-    return match(player, {
-        Player1: () => round[0],
-        Player2: () => round[1],
-    })
+    failwith("Return the round value for the given player");
 };
 
 export const play = (round:t, player:Player.t, action:Action.t) : t => {
-    return match(player, {
-        Player1: () => [ RoundValue.play(round[0], action), round[1] ],
-        Player2: () => [ round[0], RoundValue.play(round[1], action) ],
-    })
+    failwith("Should provide a play action for a given round, player and action");
 };

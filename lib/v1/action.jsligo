@@ -1,32 +1,17 @@
-export type t =
-| ["Stone"] 
-| ["Paper"] 
-| ["Scissor"];
+export type t = unit;
 
-const stone: t = Stone();
-const paper: t = Paper();
-const scissor: t = Scissor();
+const stone: t = unit;
+const paper: t = unit;
+const scissor: t = unit;
 
 const is_stone = (a:t) : bool => {
-    match(a, {
-        Stone: () => true,
-        Paper: () => false,
-        Scissor: () => false,
-    })
+    failwith("Predicate checking is the action is stone");
 };
 
 const is_paper = (a:t) : bool => {
-    match(a, {
-        Stone: () => false,
-        Paper: () => true,
-        Scissor: () => false,
-    })
+    failwith("Predicate checking is the action is paper");
 };
 
 const is_scissor = (a:t) : bool => {
-    match(a, {
-        Stone: () => false,
-        Paper: () => false,
-        Scissor: () => true,
-    })
+    failwith("Predicate checking is the action is scissor");
 };

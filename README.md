@@ -63,80 +63,48 @@ sequenceDiagram
 
 ## Smart contract
 
-### Step 1 : Create folders & files
+```mermaid
+classDiagram
+    Action <|-- RoundValue
+    RoundValue <|-- Round
+    Round <|-- Storage
+    Player <|-- Round
+    Player <|-- Storage
 
-```bash
-mkdir smartcontract
-touch ./shifumi/contract/v1/main.jsligo
-touch ./shifumi/test/v1/test.jsligo
+    class Action{
+        +paper :Action
+        +stone :Action
+        +scissor :Action
+        +is_paper(Action) bool
+        +is_stone(Action) bool
+        +is_scissor(Action) bool
+    }
+            
+    class Player{
+        +player1 :Player 
+        +player2 :Player
+    }
+
+    class RoundValue{
+        +is_waiting(RoundValue) bool
+        +is_played(RoundValue) bool
+        +play(RoundValue,Action) RoundValue
+    }
+
+    class Round{
+        +fresh_round :Round
+        +get_round_value(Round,Player) RoundValue
+        +play(Round,Player,Action) Round
+    }
+
+    class Storage{
+        +fresh_storage : Storage
+        +new_game(Storage) : Storage
+        +get_player(Storage,Address) : Player
+        +get_current_round(Storage) : Round
+        +update_current_round(Storage,Round) : Storage
+    }
 ```
-
-### Step 2 : Edit main.jsligo
-
-Add the `Storage` namespace, the parameter type and finally the `main` function.
-
-```ligo
-export namespace Storage {
-    export type action = ["Stone"] | ["Paper"] | ["Scissor"];
-
-    export type t = unit;
-
-    export const create = (player1: address, player2: address) : t => {
-      return failwith("TODO");
-    };
-
-    export const new_game = (storage: t, player1: address, player2: address) : t => {
-      return failwith("TODO");
-    };
-
-    export const play = (storage: t, player: address, action: action) : t => {
-      return failwith("TODO");
-    };
-};
-
-export type parameter = 
-    ["Reset", [address, address]] 
-  | ["Play", action];
-
-export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
-    const new_storage = match(parameter, {
-        Reset : p => Storage.new_game(storage, p[0], p[1]),
-        Play  : p => Storage.play(storage, Tezos.sender, p)
-    });
-    return [list([]) as list<operation>, new_storage];
-};
-```
-
-Every contract requires :
-- an entrypoint, **main** by default, with a mandatory signature taking 2 parameters and a return : 
-    - **parameter** : the contract `parameter`
-    - **storage** : the on-chain storage (can be any type, here `unit` by default)
-    - **return_** : a list of `operation` and a storage
-
-> Doc :  https://ligolang.org/docs/advanced/entrypoints-contracts
-
->:warning: You will notice that jsligo is a javascript-like language, multiple parameter declaration is a bit different.
-You have to separate variable name to its type declaration this way : `([action, store] : [parameter, storage])`
-
-Simple pattern matching is an important feature in Ligo. We need a switch on the entrypoint function to manage different actions. 
-We use `match` to evaluate the parameter and call the appropriated `poke` function
-
-> Doc https://ligolang.org/docs/language-basics/unit-option-pattern-matching
-
-```ligo
-    match (action, {
-        Reset : p => Storage.new_game(storage, p[0], p[1]),
-        Play  : p => Storage.play(storage, Tezos.sender, p)
-    } 
-```
-
-`Reset` and `Play` aare `parameters` from a `variant` type. It can be expressed by the following type:
-
-```ligo
-export type parameter = ["Reset", address, address] | ["Play", action];
-```
-
-> Doc https://ligolang.org/docs/language-basics/unit-option-pattern-matching#variant-types
 
 # V2 A fair game!
 
