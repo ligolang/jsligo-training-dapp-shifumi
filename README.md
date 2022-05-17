@@ -16,6 +16,12 @@ Goal of this training is to develop a shifumi game with smart contract. You will
 
 # Prerequisites
 
+## Remote execution
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/ligolang/ligo-koans)
+
+## Local execution
+
 Please install this software first on your machine or use online alternative : 
 
 - [ ] [VS Code](https://code.visualstudio.com/download) : as text editor
@@ -132,11 +138,7 @@ export type parameter = ["Reset", address, address] | ["Play", action];
 
 > Doc https://ligolang.org/docs/language-basics/unit-option-pattern-matching#variant-types
 
-# V2 
-
-## Game rule
-
-> We propose an implementation for only two players in order to simplify some algorithms.
+# V2 A fair game!
 
 The gameplay is done in two stages. The first one each player choose to play `stone` or `paper` or `cisor`
 and cipher it thanks to the `chest` functionality provided by the Tezos protocol.
@@ -253,9 +255,7 @@ export const main = (parameter: parameter, storage: Storage.t) : [list<operation
 };
 ```
 
-# V3
-
-Time to Bet!
+# V3 Time to Bet!
 
 In this third version each player should engage 1tez each time they decide to play an action.
 
