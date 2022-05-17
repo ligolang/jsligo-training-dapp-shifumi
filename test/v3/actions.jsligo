@@ -1,0 +1,62 @@
+#import "../common/check.jsligo" "Check"
+#import "../../lib/v1/action.jsligo" "Action"
+ 
+// ---
+
+const case01 = (): unit => {
+    Check.assert_equal(Action.is_paper(Paper()), true);   
+};
+
+const case02 = (): unit => {
+    Check.assert_equal(Action.is_paper(Stone()), false);   
+};
+
+const case03 = (): unit => {
+    Check.assert_equal(Action.is_paper(Scissor()), false);   
+};
+
+// ---
+
+const case04 = (): unit => {
+    Check.assert_equal(Action.is_stone(Paper()), false);   
+};
+
+const case05 = (): unit => {
+    Check.assert_equal(Action.is_stone(Stone()), true);   
+};
+
+const case06 = (): unit => {
+    Check.assert_equal(Action.is_stone(Scissor()), false);   
+};
+
+// ---
+
+const case07 = (): unit => {
+    Check.assert_equal(Action.is_scissor(Paper()), false);   
+};
+
+const case08 = (): unit => {
+    Check.assert_equal(Action.is_scissor(Stone()), false);   
+};
+
+const case09 = (): unit => {
+    Check.assert_equal(Action.is_scissor(Scissor()), true);   
+};
+
+// ---
+
+case10 = (): unit => {
+    Check.assert_equal(Action.win_against(Scissor(),Paper()), true);   
+};
+
+case10 = (): unit => {
+    Check.assert_equal(Action.win_against(Scissor(),Paper()), true);   
+};
+
+case10 = (): unit => {
+    Check.assert_equal(Action.win_against(Scissor(),Paper()), true);   
+};
+
+const tests = Check.cases(list([ 
+    case01, case02, case03, case04, case05, case06, case07, case08, case09
+]));

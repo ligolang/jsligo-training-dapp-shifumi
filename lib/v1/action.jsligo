@@ -19,16 +19,10 @@ const is_paper = (a:t) : bool => {
     })
 };
 
-const is_cisor = (a:t) : bool => {
+const is_scissor = (a:t) : bool => {
     match(a, {
         Stone: () => false,
         Paper: () => false,
         Scissor: () => true,
     })
 };
-
-export const win_against = (winner: t, looser: t) : bool => {
-    return (is_cisor(winner) && is_paper(looser)) ||
-           (is_paper(winner) && is_stone(looser)) ||
-           (is_stone(winner) && is_cisor(looser));
-}

@@ -24,9 +24,3 @@ const is_cisor = (a:t) : bool => {
         Scissor: () => true,
     })
 };
-
-export const win_against = (winner: t, looser: t) : bool => {
-    return (is_cisor(winner) && is_paper(looser)) ||
-           (is_paper(winner) && is_stone(looser)) ||
-           (is_stone(winner) && is_cisor(looser));
-}

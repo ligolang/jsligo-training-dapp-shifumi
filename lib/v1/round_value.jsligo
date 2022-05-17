@@ -1,0 +1,26 @@
+#import "action.jsligo" "Action"
+
+export type t = 
+| ["Waiting"] 
+| ["Played", Action.t];
+
+export const is_waiting = (round_value:t) : bool => {
+    return match(round_value, {
+        Waiting: () => true,
+        Played: _p => false
+    });
+};
+
+export const is_played = (round_value:t) : bool => {
+    return match(round_value, {
+        Waiting: () => false,
+        Played: _p => true,
+    });
+};
+
+export const play = (round_value:t, action:Action.t) : t => {
+    return match(round_value, {
+        Waiting: () => Played(action),
+        Played: p => Played(p)
+    });
+};

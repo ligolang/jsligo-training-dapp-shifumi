@@ -1,0 +1,76 @@
+#import "errors.jsligo" "Errors"
+#import "action.jsligo" "Action"
+
+export type t = 
+| ["Waiting"] 
+| ["Played", [chest, tez]] 
+| ["Revealed", [Action.t, tez]];
+
+export const is_waiting = (round_value:t) : bool => {
+    return match(round_value, {
+        Waiting: () => true,
+        Played: _p => false,
+        Revealed: _p => false
+    });
+};
+
+export const is_played = (round_value:t) : bool => {
+    return match(round_value, {
+        Waiting: () => false,
+        Played: _p => true,
+        Revealed: _p => false
+    });
+};
+
+export const is_revealed = (round_value:t) : bool => {
+    return match(round_value, {
+        Waiting: () => false,
+        Played: _p => false,
+        Revealed: _p => true
+    });
+};
+
+export const play = (round_value:t, action:chest, amount:tez) : t => {
+    return match(round_value, {
+        Waiting: () => Played([action,amount]),
+        Played: p => Played(p),
+        Revealed: p => Revealed(p)
+    });
+};
+
+const decode_chest = ([player_key, user_chest, player_secret]: [chest_key, chest, nat]): bytes => {
+    return match (Tezos.open_chest(player_key, user_chest, player_secret), {
+        Ok_opening: (b: bytes) => b,
+        Fail_timelock: () => failwith(Errors.failed_to_open_chest),
+        Fail_decrypt: () => failwith(Errors.failed_to_open_chest)
+    });
+};
+
+const decode_action = (payload: bytes): Action.t => { 
+    return match ((Bytes.unpack(payload) as option<Action.t>), {
+        None: () => failwith(Errors.failed_to_unpack_payload),
+        Some: action => action
+    });
+};
+
+export const reveal = (round_value:t, chest_key:chest_key, secret:nat) : t => {
+    return match(round_value, {
+        Waiting: () => Waiting(),
+        Played: p => Revealed ([ decode_action(decode_chest(chest_key, p[0], secret)), p[1] ]),
+        Revealed : p => Revealed (p)
+    });
+};
+
+export const get_revealed = (r1:t, r2:t) : option<{player1:[Action.t,tez],player2:[Action.t,tez]}> => {
+    match(r1, {
+        Waiting: () => None (),
+        Played: _p => None (),
+        Revealed: p1 => {
+            match(r2, {
+                Waiting: () => None (),
+                Played: _p => None (),
+                Revealed: p2 => Some ({player1:p1, player2:p2})
+            })
+        }
+    })
+};

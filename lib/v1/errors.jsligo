@@ -1,3 +1,2 @@
 export const invalid_round : string = "Invalid round";
 export const user_not_allowed_to_play : string = "User not allowed to play";
-export const no_winner : string = "No players have played in the current round, thus cannot deduce troller";

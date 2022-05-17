@@ -1,6 +1,6 @@
 #import "../common/assert.mligo" "Assert"
-#import "../../solutions/v3/errors.jsligo" "Errors"
-#import "../../solutions/v3/main.jsligo" "Contract"
+#import "../../lib/v3/errors.jsligo" "Errors"
+#import "../../lib/v3/main.jsligo" "Contract"
 
 type player = {
     address: address,
