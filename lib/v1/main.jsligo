@@ -29,7 +29,7 @@ const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
 
 export type parameter = | ["Play", Action.t];
 
-export const main = ([parameter,storage]:[parameter, Storage.t]) : [list<operation>, Storage.t] => {
+export const main = (parameter:parameter, storage:Storage.t) : [list<operation>, Storage.t] => {
     match(parameter, {
         Play : p => conclude(play(storage, Tezos.sender, p))
     });

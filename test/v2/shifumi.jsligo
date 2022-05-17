@@ -1,5 +1,6 @@
 #import "../common/assert.mligo" "Assert"
 #import "../../lib/v2/errors.jsligo" "Errors"
+#import "../../lib/v1/action.jsligo" "Action"
 #import "../../lib/v2/main.jsligo" "Contract"
 
 type player = {
@@ -35,7 +36,7 @@ const alice_play = () : string => {
 
     // When
     Test.set_source(alice.address);
-    const material = get_play(Paper(), alice.secret);
+    const material = get_play(Action.paper, alice.secret);
     const result = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
     
     // Then
@@ -48,7 +49,7 @@ const alice_play_twice = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
-    const material = get_play(Paper(), alice.secret);
+    const material = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
 
     // When
@@ -65,7 +66,7 @@ const alice_play_and_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
-    const material = get_play(Paper(), alice.secret);
+    const material = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
 
     // When
@@ -81,7 +82,7 @@ const alice_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
-    const material = get_play(Paper(), alice.secret);
+    const material = get_play(Action.paper, alice.secret);
 
     // When
     const result = Test.transfer_to_contract(contract, Reveal([material[1], alice.secret]), 0 as tez);
@@ -96,12 +97,12 @@ const alice_play_bob_play = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
-    const material_alice = get_play(Paper(), alice.secret);
+    const material_alice = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
 
     // When
     Test.set_source(bob.address);
-    const material_bob = get_play(Scissor(), bob.secret);
+    const material_bob = get_play(Action.scissor, bob.secret);
     const result = Test.transfer_to_contract(contract, Play(material_bob[0]), 0 as tez);
   
     // Then
@@ -114,11 +115,11 @@ const alice_play_bob_play_alice_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
-    const material_alice = get_play(Paper(), alice.secret);
+    const material_alice = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
 
     Test.set_source(bob.address);
-    const material_bob = get_play(Scissor(), bob.secret);
+    const material_bob = get_play(Action.scissor, bob.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 0 as tez);
 
     // When
@@ -135,11 +136,11 @@ const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
     // Given
     const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
     Test.set_source(alice.address);
-    const material_alice = get_play(Paper(), alice.secret);
+    const material_alice = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
 
     Test.set_source(bob.address);
-    const material_bob = get_play(Scissor(), bob.secret);
+    const material_bob = get_play(Action.scissor, bob.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 0 as tez);
 
     Test.set_source(alice.address);
@@ -162,7 +163,7 @@ const james_cannot_play = () : string => {
 
     // When
     Test.set_source(james);
-    const material = get_play(Paper(), 0 as nat);
+    const material = get_play(Action.paper, 0 as nat);
     const result = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
 
     // Then

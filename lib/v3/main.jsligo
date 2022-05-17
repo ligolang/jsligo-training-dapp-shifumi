@@ -36,7 +36,7 @@ export const reveal = (storage: Storage.t, player_address:address, chest_key:che
 };
 
 const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
-    const round   = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
     const round_value_player1 = Round.get_round_value(round, Player1());
     const round_value_player2 = Round.get_round_value(round, Player2());
 

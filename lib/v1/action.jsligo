@@ -1,7 +1,11 @@
-export type t = 
+export type t =
 | ["Stone"] 
 | ["Paper"] 
 | ["Scissor"];
+
+const stone: t = Stone();
+const paper: t = Paper();
+const scissor: t = Scissor();
 
 const is_stone = (a:t) : bool => {
     match(a, {

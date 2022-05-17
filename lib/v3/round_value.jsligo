@@ -61,12 +61,12 @@ export const reveal = (round_value:t, chest_key:chest_key, secret:nat) : t => {
     });
 };
 
-export const get_revealed = (r1:t, r2:t) : option<{player1:[Action.t,tez],player2:[Action.t,tez]}> => {
-    match(r1, {
+export const get_revealed = (round_value_player1:t, round_value_player2:t) : option<{player1:[Action.t,tez],player2:[Action.t,tez]}> => {
+    match(round_value_player1, {
         Waiting: () => None (),
         Played: _p => None (),
         Revealed: p1 => {
-            match(r2, {
+            match(round_value_player2, {
                 Waiting: () => None (),
                 Played: _p => None (),
                 Revealed: p2 => Some ({player1:p1, player2:p2})
