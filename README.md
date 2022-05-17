@@ -33,7 +33,7 @@ Please install this software first on your machine or use online alternative :
 
 > We propose an implementation for only two players in order to simplify some algorithms.
 
-The gameplay is simple. Each player choose to play `stone` or `paper` or `scissor` and that's all!
+The gameplay is simple. Each player choose to play `stone`, `paper` or `scissor` and that's all!
 
 ## Nominal sequence diagram
 
@@ -171,57 +171,6 @@ sequenceDiagram
 ```
 
 ## Smart contract
-
-### Step 1 : Create folders & files
-
-```bash
-mkdir smartcontract
-touch ./shifumi/contract/main.jsligo
-touch ./shifumi/test/test.jsligo
-```
-
-### Step 2 : Edit main.jsligo
-
-Add the `Storage` namespace, the parameter type and finally the `main` function.
-
-```ligo
-export namespace Storage {
-    export type action = ["Stone"] | ["Paper"] | ["Scissor"];
-
-    export type t = unit;
-
-    export const create = (player1: address, player2: address) : t => {
-      return failwith("TODO");
-    };
-
-    export const new_game = (storage: t, player1: address, player2: address) : t => {
-      return failwith("TODO");
-    };
-
-    export const play = (storage: t, player: address, action: chest) : t => {
-      return failwith("TODO");
-    };
-
-    export const reveal = (storage: t, player: address, chest_key: chest_key, secret: nat) : t => {
-      return failwith("TODO");
-    };
-
-};
-
-export type parameter = 
-    ["Reset", [address, address]] 
-  | ["Play", chest] 
-  | ["Reveal", [chest_key, nat]];
-
-export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
-    const new_storage = match(parameter, {
-        Reset  : p => Storage.new_game(storage, p[0], p[1]),
-        Play   : p => Storage.play(storage, Tezos.sender, p),
-        Reveal : p => Storage.reveal(storage, Tezos.sender, p[0], p[1]),
-    });
-    return [list([]) as list<operation>, new_storage];
-};
-```
 
 # V3 Time to Bet!
 
