@@ -119,8 +119,8 @@ classDiagram
          type t
          initial_storage t
          new_game(t) t
-         get_player(t,Address.t) (option<Player.t>)
-         get_current_round(t) (option<Round.t>)
+         get_player(t,Address.t) (option Player.t)
+         get_current_round(t) (option Round.t)
          update_current_round(t,Round.t) (Storage.t)
          get_address(t,Player.t) Address
     }
