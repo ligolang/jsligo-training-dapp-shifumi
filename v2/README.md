@@ -9,14 +9,16 @@ Training Shifumi dapp V2
 
 # A fair game!
 
-The gameplay is done in two stages. The first one each player choose to play `stone` or `paper` or `scissor`
-and cipher it thanks to the `chest` functionality provided by the Tezos protocol.
+In order to have a fair game the gameplay is done in two stages. The first one each player 
+choose to play `stone` or `paper` or `scissor` and cipher it thanks to the `chest` functionality 
+provided by the Tezos protocol. So compared to v1 instead of sending directly the action value 
+the player send its encrypted value.
 
-> [Chest in Tezos]()
+> [Chest in Tezos](https://tezos.gitlab.io/alpha/timelock.html)
 
-The second one each player reveal his choice sending the `chest_key` and the `secret` used for the ciphering.
-Of course a player cannot reveal its choice since the other one did not play. When each player has revealed
-we can can conclude.
+Each player can reveal his choice sending the `chest_key` and  the `secret` used for the ciphering. 
+Of course a player cannot reveal its choice since the other one did not play. When each player has 
+revealedwe can can conclude.
 
 ## Nominal sequence diagram
 
