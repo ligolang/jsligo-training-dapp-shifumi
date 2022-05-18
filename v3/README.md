@@ -102,8 +102,8 @@ classDiagram
          type t
          is_waiting(t) bool
          is_played(t) bool
-         play(t,chest,tez) RoundValue
-         reveal(t,(chest) -> Action.t) RoundValue
+         play(t,chest,tez) t
+         reveal(t,(chest) -> Action.t) t
          revealed(t,t) 
     }
 
@@ -119,8 +119,8 @@ classDiagram
          type t
          initial_storage t
          new_game(t) t
-         get_player(t,Address.t) (option Player.t)
-         get_current_round(t) (option Round.t)
+         get_player(t,Address.t) (option<Player.t>)
+         get_current_round(t) (option<Round.t>)
          update_current_round(t,Round.t) (Storage.t)
          get_address(t,Player.t) Address
     }
