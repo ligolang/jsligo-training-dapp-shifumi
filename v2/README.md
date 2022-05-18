@@ -113,8 +113,8 @@ classDiagram
     class Storage{
         +initial_storage : Storage
         +new_game(Storage) Storage
-        +get_player(Storage,Address) option<Player>
-        +get_current_round(Storage) option<Round>
+        +get_player(Storage,Address) (option&lt;Player&gt;)
+        +get_current_round(Storage) (option&lt;Round&gt;)
         +update_current_round(Storage,Round) Storage
     }
 ```

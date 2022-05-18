@@ -101,6 +101,7 @@ classDiagram
         +is_played(RoundValue) bool
         +play(RoundValue,chest,tez) RoundValue
         +reveal(RoundValue,(chest) -> Action.t) RoundValue
+        +revealed(RoundValue,RoundValue) (option&lt;{player1:[Action.t,tez],player2:[Action.t,tez]}&gt;)
     }
 
     class Round{
@@ -108,15 +109,14 @@ classDiagram
         +get_round_value(Round,Player) RoundValue
         +play(Round,Player,chest,tez) Round
         +reveal(Round,Player,(chest) -> Action.t) RoundValue
-        +revealed(Round,Player,(chest) -> Action.t) option<{player1:[Action.t,tez],player2:[Action.t,tez]}>
     }
 
     class Storage{
         +fresh_storage Storage
         +new_game(Storage) Storage
-        +get_player(Storage,Address) option<Player>
-        +get_current_round(Storage) option<Round>
+        +get_player(Storage,Address) (option&lt;Player&gt;)
+        +get_current_round(Storage) (option&lt;Round&gt;)
         +update_current_round(Storage,Round) Storage
-        +get_address(Storage,Address) Player
+        +get_address(Storage,Player) Address
     }
 ```
