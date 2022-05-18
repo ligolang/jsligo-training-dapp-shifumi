@@ -1,0 +1,27 @@
+#import "common/check.jsligo" "Check"
+#import "../lib/action.jsligo" "Action"
+#import "../lib/round_value.jsligo" "RoundValue"
+ 
+// ---
+
+const case01 = (): unit => {
+    Check.assert_equal(RoundValue.is_waiting(RoundValue.waiting), true);   
+};
+
+const case02 = (): unit => {
+    Check.assert_equal(RoundValue.is_played(RoundValue.waiting), false); 
+};
+
+const case03 = (): unit => {
+    Check.assert_equal(RoundValue.is_played(RoundValue.play(RoundValue.waiting, Action.scissor)), true);   
+};
+
+const case04 = (): unit => {
+    Check.assert_equal(RoundValue.is_waiting(RoundValue.play(RoundValue.waiting, Action.scissor)), false);   
+};
+
+// ---
+
+const tests = Check.cases(list([ 
+    case01, case02, case03, case04
+]));

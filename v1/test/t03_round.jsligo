@@ -1,0 +1,59 @@
+#import "common/check.jsligo" "Check"
+#import "../lib/player.jsligo" "Player"
+#import "../lib/action.jsligo" "Action"
+#import "../lib/round_value.jsligo" "RoundValue"
+#import "../lib/round.jsligo" "Round"
+ 
+// ---
+
+const case01 = (): unit => {
+    // Given
+    const round = Round.fresh_round;
+
+    // When
+    const round_value = Round.get_round_value(round, Player.player1);
+
+    // Then
+    Check.assert_equal(RoundValue.is_waiting(round_value), true);   
+};
+
+const case02 = (): unit => {
+    // Given
+    const round = Round.fresh_round;
+
+    // When
+    const round_value = Round.get_round_value(round, Player.player2);
+
+    // Then
+    Check.assert_equal(RoundValue.is_waiting(round_value), true);   
+};
+
+// ---
+
+const case03 = (): unit => {
+    // Given
+    const round = Round.fresh_round;
+
+    // When
+    const new_round = Round.play(round, Player.player1, Action.scissor);
+
+    // Then
+    Check.assert_equal(RoundValue.is_played(Round.get_round_value(new_round, Player.player1)), true);   
+};
+
+const case04 = (): unit => {
+    // Given
+    const round = Round.fresh_round;
+
+    // When
+    const new_round = Round.play(round, Player.player1, Action.scissor);
+
+    // Then
+    Check.assert_equal(RoundValue.is_waiting(Round.get_round_value(new_round, Player.player2)), true);   
+};
+
+// ---
+
+const tests = Check.cases(list([ 
+    case01, case02, case03, case04
+]));

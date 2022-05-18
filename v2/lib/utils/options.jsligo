@@ -1,0 +1,6 @@
+const get_exn : <T>(p:option<T>, message:string) => T = (p:option<T>, message:string) => {
+    match(p, {
+        None: () => failwith(message),
+        Some: p => p
+    })   
+}

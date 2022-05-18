@@ -1,0 +1,55 @@
+#import "utils/options.jsligo" "Options"
+#import "utils/chest.jsligo" "Chest"
+#import "errors.jsligo" "Errors"
+#import "player.jsligo" "Player"
+#import "action.jsligo" "Action"
+#import "round_value.jsligo" "RoundValue"
+#import "round.jsligo" "Round"
+#import "storage.jsligo" "Storage"
+
+type decoder = (chest:chest) => Action.t;
+
+const play = ([storage, player_address, action]:[Storage.t, address, chest]) : [list<operation>, Storage.t] => {
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+    const player = Options.get_exn(Storage.get_player(storage, player_address), Errors.user_not_allowed_to_play);
+
+    if (RoundValue.is_waiting(Round.get_round_value(round, player))) {
+        return [list([]) as list<operation>, Storage.update_round(storage, Round.play(round, player, action))];
+    } else {
+        return failwith(Errors.user_not_allowed_to_play);
+    };
+};
+
+const reveal = ([storage, player_address, chest_key, secret]:[Storage.t, address, chest_key, nat]) : Storage.t => {
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+    const player = Options.get_exn(Storage.get_player(storage, player_address), Errors.user_not_allowed_to_play);
+
+    if (RoundValue.is_waiting(Round.get_round_value(round, Player.player1)) || 
+        RoundValue.is_waiting(Round.get_round_value(round, Player.player2))) {
+        return failwith(Errors.user_not_allowed_to_reveal);
+    } else if (RoundValue.is_played(Round.get_round_value(round, player))) {
+        return Storage.update_round(storage, Round.reveal(round, player, Chest.decoder(chest_key, secret) as decoder));
+    } else {
+        return failwith(Errors.user_not_allowed_to_reveal);
+    };
+};
+
+export const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+
+    if (RoundValue.is_revealed(Round.get_round_value(round, Player.player1)) && 
+        RoundValue.is_revealed(Round.get_round_value(round, Player.player2))) {
+        return [list([]) as list<operation>, Storage.new_game(storage)];
+    } else {
+        return [list([]) as list<operation>, storage];
+    }
+};
+
+export type parameter = ["Play", chest] | ["Reveal", [chest_key, nat]];
+
+export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
+    match(parameter, {
+        Play   : p => play(storage, Tezos.sender, p),
+        Reveal : p => conclude(reveal(storage, Tezos.sender, p[0], p[1])),
+    });    
+};

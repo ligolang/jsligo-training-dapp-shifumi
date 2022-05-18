@@ -1,0 +1,4 @@
+export type t = unit;
+
+export const player1 : t = unit;
+export const player2 : t = unit;
