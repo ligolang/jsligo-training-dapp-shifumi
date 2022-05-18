@@ -1,5 +1,6 @@
 #import "../common/options.jsligo" "Options"
 #import "errors.jsligo" "Errors"
+#import "player.jsligo" "Player"
 #import "action.jsligo" "Action"
 #import "round_value.jsligo" "RoundValue"
 #import "round.jsligo" "Round"
@@ -19,8 +20,8 @@ const play = (storage:Storage.t, player_address:address, action: Action.t) : Sto
 const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
     const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
 
-    if (RoundValue.is_played(Round.get_round_value(round, Player1())) && 
-        RoundValue.is_played(Round.get_round_value(round, Player2()))) {
+    if (RoundValue.is_played(Round.get_round_value(round, Player.player1)) && 
+        RoundValue.is_played(Round.get_round_value(round, Player.player2))) {
         return [list([]) as list<operation>, Storage.new_game(storage)];
     } else {
         return [list([]) as list<operation>, storage];

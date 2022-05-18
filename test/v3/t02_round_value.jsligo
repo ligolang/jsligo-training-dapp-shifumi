@@ -1,0 +1,104 @@
+#import "../common/check.jsligo" "Check"
+#import "../../lib/v3/action.jsligo" "Action"
+#import "../../lib/v3/round_value.jsligo" "RoundValue"
+
+const get_play = ([play, secret]: [Action.t, nat]) : [chest, chest_key] => {
+    const payload = Bytes.pack(play);
+    return Test.create_chest(payload, secret);
+};
+
+// ---
+
+const case01 = (): unit => {
+    Check.assert_equal(RoundValue.is_waiting(RoundValue.waiting), true);   
+};
+
+const case02 = (): unit => {
+    Check.assert_equal(RoundValue.is_played(RoundValue.waiting), false); 
+};
+
+const case03 = (): unit => {
+    Check.assert_equal(RoundValue.is_revealed(RoundValue.waiting), false); 
+};
+
+// ---
+
+const case04 = (): unit => {
+    // Given 
+    const played = get_play(Action.scissor, 42 as nat);
+    const round_value = RoundValue.waiting;
+
+    // When
+    const new_round_value = RoundValue.play(round_value, played[0], 1 as tez);
+
+    // Then
+    Check.assert_equal(RoundValue.is_played(new_round_value), true);   
+};
+
+const case05 = (): unit => {
+    // Given 
+    const played = get_play(Action.scissor, 42 as nat);
+    const round_value = RoundValue.waiting;
+
+    // When
+    const new_round_value = RoundValue.play(round_value, played[0], 1 as tez);
+
+    // Then
+    Check.assert_equal(RoundValue.is_waiting(new_round_value), false);   
+};
+
+const case06 = (): unit => {
+    // Given 
+    const played = get_play(Action.scissor, 42 as nat);
+    const round_value = RoundValue.waiting;
+
+    // When
+    const new_round_value = RoundValue.play(round_value, played[0], 1 as tez);
+
+    // Then
+    Check.assert_equal(RoundValue.is_revealed(new_round_value), false);   
+};
+
+// ---
+
+const case07 = (): unit => {
+    // Given 
+    const played : [chest, chest_key] = get_play(Action.scissor, 42 as nat);
+    const round_value : RoundValue.t = RoundValue.play(RoundValue.waiting, played[0], 1 as tez);
+
+    // When
+    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (chest:chest) => Action.scissor);
+
+    // Then
+    Check.assert_equal(RoundValue.is_revealed(new_round_value), true);   
+};
+
+const case08 = (): unit => {
+    // Given 
+    const played : [chest, chest_key] = get_play(Action.scissor, 42 as nat);
+    const round_value : RoundValue.t = RoundValue.play(RoundValue.waiting, played[0], 1 as tez);
+
+    // When
+    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (chest:chest) => Action.scissor);
+
+    // Then
+    Check.assert_equal(RoundValue.is_waiting(new_round_value), false);   
+};
+
+const case09 = (): unit => {
+    // Given 
+    const played : [chest, chest_key] = get_play(Action.scissor, 42 as nat);
+    const round_value : RoundValue.t = RoundValue.play(RoundValue.waiting, played[0], 1 as tez);
+
+    // When
+    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (chest:chest) => Action.scissor);
+
+    // Then
+    Check.assert_equal(RoundValue.is_played(new_round_value), false);   
+};
+
+// ---
+
+const tests = Check.cases(list([ 
+    case01, case02, case03, case04, case05, case06, case07, case08
+]));

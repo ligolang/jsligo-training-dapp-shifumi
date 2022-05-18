@@ -10,14 +10,26 @@ help:
 
 all: v1 v2 v3
 
-v1: test/v1/shifumi.jsligo
-	@echo "[Testing] $^"
-	@$(ligo_compiler) run test $^
+v1:
+	@echo "[Testing] v1"
+	@$(ligo_compiler) run test test/v1/t01_action.jsligo
+	@$(ligo_compiler) run test test/v1/t02_round_value.jsligo
+	@$(ligo_compiler) run test test/v1/t03_round.jsligo
+	@$(ligo_compiler) run test test/v1/t04_storage.jsligo
+	@$(ligo_compiler) run test test/v1/t05_shifumi.jsligo
 
-v2: test/v2/shifumi.jsligo 
-	@echo "[Testing] $^"
-	@$(ligo_compiler) run test $^
+v2: 
+	@echo "[Testing] v2"
+	@$(ligo_compiler) run test test/v2/t01_action.jsligo
+	@$(ligo_compiler) run test test/v2/t02_round_value.jsligo
+	@$(ligo_compiler) run test test/v2/t03_round.jsligo
+	@$(ligo_compiler) run test test/v2/t04_storage.jsligo
+	@$(ligo_compiler) run test test/v2/t05_shifumi.jsligo
 
-v3: test/v3/shifumi.jsligo 
-	@echo "[Testing] $^"
-	@$(ligo_compiler) run test $^
+v3: 
+	@echo "[Testing] v3"
+	@$(ligo_compiler) run test test/v3/t01_action.jsligo
+	@$(ligo_compiler) run test test/v3/t02_round_value.jsligo
+	@$(ligo_compiler) run test test/v3/t03_round.jsligo
+	@$(ligo_compiler) run test test/v3/t04_storage.jsligo
+	@$(ligo_compiler) run test test/v3/t05_shifumi.jsligo

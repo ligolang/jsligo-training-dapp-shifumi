@@ -32,7 +32,7 @@ const get_play = ([play, secret]: [Contract.Storage.Action.t, nat]) : [chest, ch
 
 const alice_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
 
     // When
     Test.set_source(alice.address);
@@ -47,7 +47,7 @@ const alice_play = () : string => {
 
 const alice_play_twice = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
@@ -64,7 +64,7 @@ const alice_play_twice = () : string => {
 
 const alice_play_and_reveal = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
@@ -80,7 +80,7 @@ const alice_play_and_reveal = () : string => {
 
 const alice_reveal = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material = get_play(Action.paper, alice.secret);
 
@@ -95,7 +95,7 @@ const alice_reveal = () : string => {
 
 const alice_play_bob_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material_alice = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
@@ -113,7 +113,7 @@ const alice_play_bob_play = () : string => {
 
 const alice_play_bob_play_alice_reveal = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material_alice = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
@@ -134,7 +134,7 @@ const alice_play_bob_play_alice_reveal = () : string => {
 
 const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material_alice = get_play(Action.paper, alice.secret);
     const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 0 as tez);
@@ -159,7 +159,7 @@ const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
 
 const james_cannot_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
 
     // When
     Test.set_source(james);

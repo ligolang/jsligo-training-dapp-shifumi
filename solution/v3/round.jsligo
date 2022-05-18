@@ -22,9 +22,9 @@ export const play = (round:t, player:Player.t, action:chest, amount:tez) : t => 
     })
 };
 
-export const reveal = (round:t, player:Player.t, chest_key:chest_key, secret: nat) : t => {
+export const reveal = (round:t, player:Player.t, decode: (chest:chest) => Action.t) : t => {
     return match(player, {
-        Player1: () => [ RoundValue.reveal(round[0], chest_key, secret), round[1] ],
-        Player2: () => [ round[0], RoundValue.reveal(round[1], chest_key, secret) ],
+        Player1: () => [ RoundValue.reveal(round[0], decode), round[1] ],
+        Player2: () => [ round[0], RoundValue.reveal(round[1], decode) ],
     })
 };

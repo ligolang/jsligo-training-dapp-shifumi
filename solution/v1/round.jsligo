@@ -4,7 +4,7 @@
 
 export type t = [RoundValue.t, RoundValue.t];
 
-const fresh_round = [Waiting(), Waiting()];
+export const fresh_round = [RoundValue.waiting, RoundValue.waiting];
 
 export const get_round_value = (round:t, player:Player.t) : RoundValue.t => {
     return match(player, {

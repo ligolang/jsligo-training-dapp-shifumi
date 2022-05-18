@@ -1,4 +1,5 @@
 #import "../common/assert.mligo" "Assert"
+#import "../../lib/v1/player.jsligo" "Player"
 #import "../../lib/v1/errors.jsligo" "Errors"
 #import "../../lib/v1/action.jsligo" "Action"
 #import "../../lib/v1/main.jsligo" "Contract"
@@ -26,7 +27,7 @@ const get_contract = (storage:Contract.Storage.t) : contract<Contract.parameter>
 
 const alice_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
 
     // When
     Test.set_source(alice.address);
@@ -40,7 +41,7 @@ const alice_play = () : string => {
 
 const alice_play_twice = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material = Action.paper;
     const _ = Test.transfer_to_contract(contract, Play(material), 0 as tez);
@@ -56,7 +57,7 @@ const alice_play_twice = () : string => {
 
 const alice_play_bob_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
     const material_alice = Action.paper;
     const _ = Test.transfer_to_contract(contract, Play(material_alice), 0 as tez);
@@ -74,7 +75,7 @@ const alice_play_bob_play = () : string => {
 
 const james_cannot_play = () : string => {
     // Given
-    const contract = get_contract(Contract.Storage.fresh_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
 
     // When
     Test.set_source(james);

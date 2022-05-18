@@ -9,7 +9,7 @@ export type t = {
     rounds  : map<nat, Round.t>,
 };
 
-export const fresh_game = (p1:address, p2:address) : t => {
+export const initial_game = (p1:address, p2:address) : t => {
     return ({ 
         round   : 0 as nat,
         players : [p1, p2],

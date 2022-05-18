@@ -1,3 +1,6 @@
 export type t = 
 | ["Player1"]
 | ["Player2"];
+
+export const player1 : t = Player1();
+export const player2 : t = Player2();

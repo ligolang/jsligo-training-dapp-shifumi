@@ -15,3 +15,9 @@ const is_paper = (a:t) : bool => {
 const is_scissor = (a:t) : bool => {
     failwith("Predicate checking if the action is scissor");
 };
+
+export const win_against = (winner: t, looser: t) : bool => {
+    return (is_scissor(winner) && is_paper(looser)) ||
+           (is_paper(winner) && is_stone(looser)) ||
+           (is_stone(winner) && is_scissor(looser));
+}

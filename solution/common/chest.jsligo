@@ -1,0 +1,21 @@
+const failed_to_open_chest : string = "Failed to open chest";
+const failed_to_unpack_payload : string = "Failed to unpack the payload";
+
+const decode_chest = ([player_key, user_chest, player_secret]: [chest_key, chest, nat]): bytes => {
+    return match (Tezos.open_chest(player_key, user_chest, player_secret), {
+        Ok_opening: (b: bytes) => b,
+        Fail_timelock: () => failwith(failed_to_open_chest),
+        Fail_decrypt: () => failwith(failed_to_open_chest)
+    });
+};
+
+const decode_payload : <T>(payload: bytes) => T = (payload: bytes) => { 
+    return match ((Bytes.unpack(payload) as option<T>), {
+        None: () => failwith(failed_to_unpack_payload),
+        Some: action => action
+    });
+};
+
+export const decoder : <T>(chest_key:chest_key, secret:nat) => ((chest:chest) => T) = (chest_key:chest_key, secret:nat) => {
+    return p => decode_payload(decode_chest(chest_key, p, secret));
+}

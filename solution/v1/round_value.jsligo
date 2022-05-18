@@ -4,6 +4,8 @@ export type t =
 | ["Waiting"] 
 | ["Played", Action.t];
 
+export const waiting : t = Waiting();
+
 export const is_waiting = (round_value:t) : bool => {
     return match(round_value, {
         Waiting: () => true,
