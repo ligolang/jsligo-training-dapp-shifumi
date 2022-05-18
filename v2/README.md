@@ -71,3 +71,49 @@ sequenceDiagram
   Player1-xSM: reveal
 ```
 
+## Smart contract data types
+
+```mermaid
+classDiagram
+    Action <|-- RoundValue
+    RoundValue <|-- Round
+    Round <|-- Storage
+    Player <|-- Round
+    Player <|-- Storage
+
+    class Action{
+        +paper :Action
+        +stone :Action
+        +scissor :Action
+        +is_paper(Action) bool
+        +is_stone(Action) bool
+        +is_scissor(Action) bool
+    }
+            
+    class Player{
+        +player1 :Player 
+        +player2 :Player
+    }
+
+    class RoundValue{
+        +is_waiting(RoundValue) bool
+        +is_played(RoundValue) bool
+        +play(RoundValue,chest) RoundValue
+        +reveal(RoundValue,(chest) -> Action.t) RoundValue
+    }
+
+    class Round{
+        +fresh_round :Round
+        +get_round_value(Round,Player) RoundValue
+        +play(Round,Player,chest) Round
+        +reveal(RoundValue,Player,(chest) -> Action.t) RoundValue
+    }
+
+    class Storage{
+        +initial_storage : Storage
+        +new_game(Storage) Storage
+        +get_player(Storage,Address) option<Player>
+        +get_current_round(Storage) option<Round>
+        +update_current_round(Storage,Round) Storage
+    }
+```

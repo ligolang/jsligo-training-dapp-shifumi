@@ -39,7 +39,7 @@ sequenceDiagram
   Player1-xSM: action'
 ```
 
-## Smart contract
+## Smart contract data types
 
 ```mermaid
 classDiagram
@@ -76,10 +76,10 @@ classDiagram
     }
 
     class Storage{
-        +fresh_storage : Storage
-        +new_game(Storage) : Storage
-        +get_player(Storage,Address) : Player
-        +get_current_round(Storage) : Round
-        +update_current_round(Storage,Round) : Storage
+        +initial_storage : Storage
+        +new_game(Storage) Storage
+        +get_player(Storage,Address) option<Player>
+        +get_current_round(Storage) option<Round>
+        +update_current_round(Storage,Round) Storage
     }
 ```
