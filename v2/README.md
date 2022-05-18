@@ -113,7 +113,7 @@ classDiagram
          fresh_round :t
          get_round_value(t,Player.t) (RoundValue.t)
          play(t,Player.t) t
-         reveal(t,Player.t,(chest) -> Action.t) (RoundValue.t)
+         reveal(t,Player.t,(chest) -> Action.t) t
     }
 
     class Storage{
