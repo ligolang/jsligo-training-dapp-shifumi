@@ -197,12 +197,11 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win = () : string => {
 };
 
 const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win_the_price = () : string => {
-    const bob_balance = Test.get_balance (bob.address);
-    const alice_balance = Test.get_balance (alice.address);
-    
     // Given
     Test.set_baker(james);
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    const bob_balance = Test.get_balance (bob.address);
+    const alice_balance = Test.get_balance (alice.address);
 
     Test.set_source(alice.address);
     const material_alice = get_play(Action.paper, alice.secret);
@@ -214,10 +213,12 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win_the_price = () : s
 
     Test.set_source(alice.address);
     const _ = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
+    Test.set_source(bob.address);
+    const _ = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
 
     // When
     Test.set_source(bob.address);
-    const result = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
+    const result = Test.transfer_to_contract(contract, Conclude(), 0 as tez);
 
     // Then
     assert(Test.get_balance(bob.address) > bob_balance);
@@ -229,10 +230,9 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win_the_price = () : s
 const alice_play_bob_play_alice_reveal_bob_reveal_and_nobody_win_the_price = () : string => {
     // Given
     Test.set_baker(james);
-    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));    
     const bob_balance = Test.get_balance (bob.address);
     const alice_balance = Test.get_balance (alice.address);
-    
 
     Test.set_source(alice.address);
     const material_alice = get_play(Action.paper, alice.secret);
@@ -244,10 +244,11 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_nobody_win_the_price = () 
 
     Test.set_source(alice.address);
     const _ = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
+    const _ = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
 
     // When
     Test.set_source(bob.address);
-    const result = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
+    const result = Test.transfer_to_contract(contract, Conclude(), 0 as tez);
 
     // Then
     assert(Test.get_balance(bob.address)   < bob_balance);

@@ -15,7 +15,8 @@ and cipher it thanks to the `chest` functionality provided by the Tezos protocol
 > [Chest in Tezos]()
 
 The second one each player reveal his choice sending the `chest_key` and the `secret` used for the ciphering.
-Of course a player cannot reveal its choice since the other one did not play.
+Of course a player cannot reveal its choice since the other one did not play. When each player has revealed
+we can can conclude.
 
 ## Nominal sequence diagram
 

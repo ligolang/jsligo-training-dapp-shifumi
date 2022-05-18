@@ -16,5 +16,5 @@ const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
 export type parameter = unit; // Type should be specified
 
 export const main = (parameter:parameter, storage:Storage.t) : [list<operation>, Storage.t] => {
-    failwith("Apply the action and conclude the game if possible");
+    failwith("Apply the action or conclude the game if possible");
 };

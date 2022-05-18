@@ -17,21 +17,22 @@ const play = (storage:Storage.t, player_address:address, action: Action.t) : Sto
     };
 };
 
-const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
+const conclude = (storage:Storage.t): Storage.t => {
     const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
 
     if (RoundValue.is_played(Round.get_round_value(round, Player.player1)) && 
         RoundValue.is_played(Round.get_round_value(round, Player.player2))) {
-        return [list([]) as list<operation>, Storage.new_game(storage)];
+        return Storage.new_game(storage);
     } else {
-        return [list([]) as list<operation>, storage];
+        return failwith(Errors.cannot_conclude);
     }
 };
 
-export type parameter = | ["Play", Action.t];
+export type parameter = | ["Play", Action.t] | ["Conclude"];
 
 export const main = (parameter:parameter, storage:Storage.t) : [list<operation>, Storage.t] => {
     match(parameter, {
-        Play : p => conclude(play(storage, Tezos.sender, p))
+        Play : p => [list([]) as list<operation>, play(storage, Tezos.sender, p)],
+        Conclude: () => [list([]) as list<operation>, conclude(storage)]
     });
 };
