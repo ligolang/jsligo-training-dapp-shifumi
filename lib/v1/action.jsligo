@@ -5,13 +5,13 @@ const paper: t = unit;
 const scissor: t = unit;
 
 const is_stone = (a:t) : bool => {
-    failwith("Predicate checking is the action is stone");
+    failwith("Predicate checking if the action is stone");
 };
 
 const is_paper = (a:t) : bool => {
-    failwith("Predicate checking is the action is paper");
+    failwith("Predicate checking if the action is paper");
 };
 
 const is_scissor = (a:t) : bool => {
-    failwith("Predicate checking is the action is scissor");
+    failwith("Predicate checking if the action is scissor");
 };
