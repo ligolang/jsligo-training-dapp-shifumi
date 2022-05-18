@@ -101,7 +101,7 @@ classDiagram
         +is_played(RoundValue) bool
         +play(RoundValue,chest,tez) RoundValue
         +reveal(RoundValue,(chest) -> Action.t) RoundValue
-        +revealed(RoundValue,RoundValue) (option<{player1:[Action.t,tez],player2:[Action.t,tez]}>)
+        +revealed(RoundValue,RoundValue) (option\<{player1:[Action.t,tez],player2:[Action.t,tez]}>)
     }
 
     class Round{
