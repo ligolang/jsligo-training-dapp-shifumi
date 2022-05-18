@@ -83,40 +83,45 @@ classDiagram
     Player <|-- Storage
 
     class Action{
-        +paper :Action
-        +stone :Action
-        +scissor :Action
-        +is_paper(Action) bool
-        +is_stone(Action) bool
-        +is_scissor(Action) bool
+         type t
+         paper : t
+         stone : t
+         scissor : t
+         is_paper(t) bool
+         is_stone(t) bool
+         is_scissor(t) bool
     }
             
     class Player{
-        +player1 :Player 
-        +player2 :Player
+         type t
+         player1 : t
+         player2 : t
     }
 
     class RoundValue{
-        +is_waiting(RoundValue) bool
-        +is_played(RoundValue) bool
-        +play(RoundValue,chest,tez) RoundValue
-        +reveal(RoundValue,(chest) -> Action.t) RoundValue
-        +revealed(RoundValue,RoundValue) 
+         type t
+         is_waiting(t) bool
+         is_played(t) bool
+         play(t,chest,tez) RoundValue
+         reveal(t,(chest) -> Action.t) RoundValue
+         revealed(t,t) 
     }
 
     class Round{
-        +fresh_round :Round
-        +get_round_value(Round,Player) RoundValue
-        +play(Round,Player,chest,tez) Round
-        +reveal(Round,Player,(chest) -> Action.t) RoundValue
+         type t
+         fresh_round :t
+         get_round_value(t,Player.t) (RoundValue.t)
+         play(t,Player.t,chest,tez) t
+         reveal(t,Player.t,(chest) -> Action.t) (RoundValue.t)
     }
 
     class Storage{
-        +fresh_storage Storage
-        +new_game(Storage) Storage
-        +get_player(Storage,Address) (option Player)
-        +get_current_round(Storage) (option Round)
-        +update_current_round(Storage,Round) Storage
-        +get_address(Storage,Player) Address
+         type t
+         initial_storage t
+         new_game(t) t
+         get_player(t,Address.t) (option Player.t)
+         get_current_round(t) (option Round.t)
+         update_current_round(t,Round.t) (Storage.t)
+         get_address(t,Player.t) Address
     }
 ```
