@@ -1,0 +1,241 @@
+#import "common/assert.mligo" "Assert"
+#import "../lib/utils/options.jsligo" "Options"
+#import "../lib/errors.jsligo" "Errors"
+#import "../lib/action.jsligo" "Action"
+#import "../lib/main.jsligo" "Contract"
+
+type player = {
+    address: address,
+    secret: nat
+};
+
+// Contract origination
+const get_contract = (storage:Contract.Storage.t) : contract<Contract.parameter> => {
+    const originated = Test.originate(Contract.main, storage, 0 as tez);
+    return (Test.to_contract(originated[0]) as contract<Contract.parameter>); 
+};
+
+// prepare players
+const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+const james: address = Test.nth_bootstrap_account(2);
+
+// Shifumi turn
+const get_play = ([play, secret]: [Contract.Storage.Action.t, nat]) : [chest, chest_key] => {
+    const payload = Bytes.pack(play);
+    return Test.create_chest(payload, secret);
+};
+
+// ----------------------------------
+// Test cases
+// ----------------------------------
+
+const alice_play = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+
+    // When
+    Test.set_source(alice.address);
+    const material = get_play(Action.paper, alice.secret);
+    const result = Test.transfer_to_contract(contract, Play(material[0]), 10 as tez);
+    
+    // Then
+    Assert.assert_success(result);
+
+    return "✅";
+};
+
+const alice_play_twice = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    Test.set_source(alice.address);
+    const material = get_play(Action.paper, alice.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material[0]), 10 as tez);
+
+    // When
+    const result = Test.transfer_to_contract(contract, Play(material[0]), 10 as tez);
+    
+    // Then
+    Assert.assert_string_failure(result, Errors.user_not_allowed_to_play);
+
+    return "✅";
+};
+
+
+const alice_play_and_reveal = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    Test.set_source(alice.address);
+    const material = get_play(Action.paper, alice.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material[0]), 10 as tez);
+
+    // When
+    const result = Test.transfer_to_contract(contract, Reveal([material[1], alice.secret]), 0 as tez);
+    
+    // Then
+    Assert.assert_string_failure(result, Errors.user_not_allowed_to_reveal);
+    
+    return "✅";
+};
+
+const alice_play_and_conclude = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    Test.set_source(alice.address);
+    const material = get_play(Action.paper, alice.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material[0]), 0 as tez);
+
+    // When
+    const result = Test.transfer_to_contract(contract, Conclude(), 0 as tez);
+    
+    // Then
+    Assert.assert_string_failure(result, Errors.cannot_conclude);
+
+    return "✅";
+};
+
+const alice_reveal = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    Test.set_source(alice.address);
+    const material = get_play(Action.paper, alice.secret);
+
+    // When
+    const result = Test.transfer_to_contract(contract, Reveal([material[1], alice.secret]), 0 as tez);
+    
+    // Then
+    Assert.assert_string_failure(result, Errors.user_not_allowed_to_reveal);
+    
+    return "✅";
+};
+
+const alice_conclude = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+
+    // When
+    Test.set_source(alice.address);
+    const material = get_play(Action.paper, alice.secret);
+    const result = Test.transfer_to_contract(contract, Conclude(), 10 as tez);
+    
+    // Then
+    Assert.assert_string_failure(result, Errors.cannot_conclude);
+
+    return "✅";
+};
+
+const alice_play_bob_play = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    Test.set_source(alice.address);
+    const material_alice = get_play(Action.paper, alice.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 10 as tez);
+
+    // When
+    Test.set_source(bob.address);
+    const material_bob = get_play(Action.scissor, bob.secret);
+    const result = Test.transfer_to_contract(contract, Play(material_bob[0]), 10 as tez);
+  
+    // Then
+    Assert.assert_success(result);
+    
+    return "✅";
+};
+
+const alice_play_bob_play_alice_reveal = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    Test.set_source(alice.address);
+    const material_alice = get_play(Action.paper, alice.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), (10 as tez));
+
+    Test.set_source(bob.address);
+    const material_bob = get_play(Action.scissor, bob.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 10 as tez);
+
+    // When
+    Test.set_source(alice.address);
+    const result = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
+
+    // Then
+    Assert.assert_success(result);
+    
+    return "✅";
+};
+
+const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+    Test.set_source(alice.address);
+    const material_alice = get_play(Action.paper, alice.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 10 as tez);
+
+    Test.set_source(bob.address);
+    const material_bob = get_play(Action.scissor, bob.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 10 as tez);
+
+    Test.set_source(alice.address);
+    const result = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
+
+    // When
+    Test.set_source(bob.address);
+    const result = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
+
+    // Then
+    // Assert.assert_success(result);
+    
+    return "✅";
+};
+
+const james_cannot_play = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+
+    // When
+    Test.set_source(james);
+    const material = get_play(Action.paper, 0 as nat);
+    const result = Test.transfer_to_contract(contract, Play(material[0]), 10 as tez);
+
+    // Then
+    Assert.assert_string_failure(result, Errors.user_not_allowed_to_play)
+    
+    return "✅";
+};
+
+const alice_play_bob_play_alice_reveal_bob_reveal_and_win = () : string => {
+    // Given
+    const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
+
+    Test.set_source(alice.address);
+    const material_alice = get_play(Action.paper, alice.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material_alice[0]), 10 as tez);
+
+    Test.set_source(bob.address);
+    const material_bob = get_play(Action.scissor, bob.secret);
+    const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 10 as tez);
+
+    Test.set_source(alice.address);
+    const _ = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
+    Test.set_source(bob.address);
+    const _ = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
+
+    // When
+    const result = Test.transfer_to_contract(contract, Conclude(), 0 as tez);
+
+    // Then
+    Assert.assert_success(result);
+    
+    return "✅";
+};
+
+const test_alice_play = alice_play ();
+const test_alice_play_twice = alice_play_twice ();
+const test_alice_play_and_try_reveal = alice_play_and_reveal ();
+const test_alice_reveal = alice_reveal ();
+const test_alice_conclude = alice_conclude ();
+const test_alice_play_bob_play = alice_play_bob_play ();
+const test_alice_play_bob_play_alice_reveal = alice_play_bob_play_alice_reveal ();
+const test_james_cannot_play = james_cannot_play ();
+const test_alice_play_bob_play_alice_reveal_bob_reveal = alice_play_bob_play_alice_reveal_bob_reveal ();
+const test_alice_play_bob_play_alice_reveal_bob_reveal_and_win = alice_play_bob_play_alice_reveal_bob_reveal_and_win ();

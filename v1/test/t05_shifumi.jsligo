@@ -143,3 +143,27 @@ const test_alice_play_twice = alice_play_twice ();
 const test_alice_play_and_conclude = alice_play_and_conclude ();
 const test_alice_play_bob_play = alice_play_bob_play ();
 const test_alice_play_bob_play_and_conclude = alice_play_bob_play_and_conclude();const test_james_cannot_play = james_cannot_play ();
+
+
+const why_this_solution_is_not_a_good_one = () : unit => {
+    const get_contract_address = (storage:Contract.Storage.t) : typed_address<Contract.parameter, Contract.Storage.t> => {
+        const originated = Test.originate(Contract.main, storage, 0 as tez);
+        return originated[0] as typed_address<Contract.parameter, Contract.Storage.t>;
+    };
+
+    const get_contract = (address:typed_address<Contract.parameter, Contract.Storage.t>) : contract<Contract.parameter> => {
+        return Test.to_contract(address) as contract<Contract.parameter>; 
+    };
+
+    const contract_address = get_contract_address(Contract.Storage.initial_game(alice.address, bob.address));
+    const contract = get_contract(contract_address);
+
+    Test.set_source(alice.address);
+    const material = Action.paper;
+    const _ = Test.transfer_to_contract(contract, Play(material), 10 as tez);
+
+    Test.log(Test.get_storage(contract_address));
+
+}
+
+const test_why_this_solution_is_not_a_good_one = why_this_solution_is_not_a_good_one ();
