@@ -50,7 +50,7 @@ sequenceDiagram
   participant Player2
   Note left of Player1: Prepare chest(stone|paper|scissor, secret)
   Player1->>SM: action
-  Player2->SM: action
+  Player2->>SM: action
   Player1-xSM: action
 ```
 
@@ -154,7 +154,7 @@ classDiagram
 
 ## Retrospective ...
 
-The current implementation is quite easy and natural but it's a good solution.
+The current implementation is quite easy and natural but is it a good solution?
 
 In the `t05_shifumi.jsligo` add the following test:
 

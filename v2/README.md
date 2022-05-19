@@ -72,6 +72,7 @@ sequenceDiagram
 ### Cannot conclude when round is not completed
 
 ```mermaid
+sequenceDiagram
   participant Player1
   participant SM
   participant Player2

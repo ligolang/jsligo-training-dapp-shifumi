@@ -27,7 +27,7 @@ sequenceDiagram
   Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Note right of Player2: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action,amount1)
-  Player2->>SM: chest(action,amount1)
+  Player2->>SM: chest(action,amount2)
   Player1->>SM: reveal
   Player2->>SM: reveal
   Sender->>SM: conclude
@@ -45,7 +45,7 @@ sequenceDiagram
   Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Note right of Player2: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action,amount1)
-  Player2->>SM: chest(action,amount1)
+  Player2->>SM: chest(action,amount2)
   Player1->>SM: reveal
   Player2->>SM: reveal
   Sender->>SM: conclude
@@ -62,7 +62,7 @@ sequenceDiagram
   Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Note right of Player2: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action,amount1)
-  Player2->>SM: chest(action,amount1)
+  Player2->>SM: chest(action,amount2)
   Player1->>SM: reveal
   Player2->>SM: reveal
   Sender->>SM: conclude
