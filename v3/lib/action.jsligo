@@ -36,3 +36,4 @@ export const win_against = (winner: t, looser: t) : bool => {
            (is_paper(winner) && is_stone(looser)) ||
            (is_stone(winner) && is_scissor(looser));
 }
+

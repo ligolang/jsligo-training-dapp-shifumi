@@ -9,7 +9,7 @@ export const is_waiting = (round_value:t) : bool => {
 };
 
 export const is_played = (round_value:t) : bool => {
-    failwith("Predicate checking if the round_value is waiting");
+    failwith("Predicate checking if the round_value is played");
 };
 
 export const play = (round_value:t, action:Action.t) : t => {

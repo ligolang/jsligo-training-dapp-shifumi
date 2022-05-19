@@ -9,71 +9,115 @@ Training Shifumi dapp V3
 
 # Time to bet!
 
-In this last version, players should bet exactly 10 tez if they want to play. 
-When the round has been revealed, the conclude action solves the round and give
-back the bet to the winner or send back the played tez to each player.
+In this last version, players should bet exactly 10 tez if they want to `play`. 
+When the round has been revealed, the `conclude` action solves the round and gives
+back the betting to the winner or send back the played tez to each player in case 
+of a draw.
 
 ## Nominal sequence diagram
 
+### Player1 wins
+
 ```mermaid
 sequenceDiagram
   participant Player1
   participant SM
   participant Player2
+  participant Sender
   Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Note right of Player2: Prepare action(stone|paper|scissor, secret)
-  Player1->>SM: chest(action),10tez
-  Player2->>SM: chest(action),10tez
+  Player1->>SM: chest(action,amount1)
+  Player2->>SM: chest(action,amount1)
   Player1->>SM: reveal
   Player2->>SM: reveal
+  Sender->>SM: conclude
+  SM-->>--Player1: amount1 + amount2)
 ```
 
-## Prohibited sequences
-
-### Cannot reveal when another player did not play
-
-```mermaid
-sequenceDiagram
-  participant Player1
-  participant SM
-  Note left of Player1: Prepare action(stone|paper|scissor, secret)
-  Player1->>SM: chest(action)
-  Player1-xSM: reveal
-```
-
-```mermaid
-sequenceDiagram
-  participant Player1
-  participant SM
-  Note left of Player1: Prepare action(stone|paper|scissor, secret)
-  Player1-xSM: reveal
-```
-
-### Cannot play twice
-
-```mermaid
-sequenceDiagram
-  participant Player1
-  participant SM
-  Note left of Player1: Prepare action(stone|paper|scissor, secret)
-  Player1->>SM: chest(action)
-  Player1-xSM: chest(action)
-```
-
-### Cannot reveal twice
+### Player2 wins
 
 ```mermaid
 sequenceDiagram
   participant Player1
   participant SM
   participant Player2
+  participant Sender
   Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Note right of Player2: Prepare action(stone|paper|scissor, secret)
-  Player1->>SM: chest(action)
-  Player2->>SM: chest(action)
+  Player1->>SM: chest(action,amount1)
+  Player2->>SM: chest(action,amount1)
   Player1->>SM: reveal
-  Player1-xSM: reveal
+  Player2->>SM: reveal
+  Sender->>SM: conclude
+  SM-->>--Player2: amount1 + amount2)
 ```
+### Draw
+
+```mermaid
+sequenceDiagram
+  participant Player1
+  participant SM
+  participant Player2
+  participant Sender
+  Note left of Player1: Prepare action(stone|paper|scissor, secret)
+  Note right of Player2: Prepare action(stone|paper|scissor, secret)
+  Player1->>SM: chest(action,amount1)
+  Player2->>SM: chest(action,amount1)
+  Player1->>SM: reveal
+  Player2->>SM: reveal
+  Sender->>SM: conclude
+  SM-->>--Player1: amount1
+  SM-->>--Player2: amount2
+```
+
+### Round Value review
+
+Since we accept tez for the betting we should manage this information during the
+round each time a player decides to play. For this purpose, the RoundValue play
+should be revisited by implementing this management.
+
+Finally, for given two `RoundValues` we would like to retrieve each player its action 
+and the betting amount thanks to the `retrieved` function.
+
+## Storage review
+
+Since we have to send the price to the winner we need a function able to retrieve the
+address for a given player.
+
+## Howto?
+
+The implementation can be done thanks to the proposed tests suite. 
+
+```sh
+training-shifumi ➤ cd v2
+v1 ➤ make 
+[Testing] v2
+("✅" , {expected = true})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = true})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = true})
+Everything at the top-level was executed.
+- tests exited with value ().
+("✅" , {expected = true})
+("✅" , {expected = false})
+
+Test failed with "Should provide a play action for a given round_value and chest"
+Trace:
+File "test/../lib/round_value.jsligo", line 36, characters 4-78:
+
+File "test/t02_round_value.jsligo", line 32, characters 28-77 ,
+File "test/common/check.jsligo", line 27, characters 41-48 ,
+File "test/common/check.jsligo", line 27, characters 4-52 ,
+File "test/t02_round_value.jsligo", line 102, character 14 to line 104, character 3
+make: *** [all] Error 1
+```
+
+Once again go through each file where implementation is required and propose an implementation.
 
 ## Smart contract data types
 

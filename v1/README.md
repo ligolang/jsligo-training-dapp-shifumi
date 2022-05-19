@@ -11,10 +11,9 @@ Training Shifumi dapp V1
 
 > We propose an implementation for only two players in order to simplify some algorithms.
 
-The gameplay is simple. Each player choose to play `stone`, `paper` or `scissor` and that's all!
-And when each player has played we can conclude thz round.
+The rule is simple. Each player chooses to `play` `stone`, `paper` or `scissor` and that's all! And when each player has played we can `conclude` the round.
 
-For this purpose we identity different sequence diagrams.
+For this purpose, we identify different sequence diagrams.
 
 ## Nominal sequence diagram
 
@@ -74,6 +73,35 @@ sequenceDiagram
   Sender-xSM: conclude
 ```
 
+## Howto ?
+
+The implementation can be done thanks to the proposed tests suite. 
+
+```sh
+training-shifumi ➤ cd v1
+v1 ➤ make 
+[Testing] v1
+
+Test failed with "Predicate checking if the action is paper"
+Trace:
+File "test/../lib/action.jsligo", line 12, characters 4-57:
+
+File "test/t01_action.jsligo", line 7, characters 23-52 ,
+File "test/common/check.jsligo", line 27, characters 41-48 ,
+File "test/common/check.jsligo", line 27, characters 4-52 ,
+File "test/t01_action.jsligo", line 48, character 14 to line 50, character 3
+make: *** [all] Error 1
+```
+
+Open the file `lib/action.jsligo` and write the expected code and iterate.
+
+Files to be reviewed:
+- actions.jsligo
+- round_value.jsligo
+- round.jsligo
+- storage.jsligo
+- main.jsligo
+
 ## Smart contract data types proposition
 
 ```mermaid
@@ -123,29 +151,6 @@ classDiagram
          update_current_round(t,Round.t) (Storage.t)
     }
 ```
-
-## Howto ?
-
-Thanks to the test most of the implementation can be done thanks to the 
-current tests suite. 
-
-```sh
-training-shifumi ➤ cd v1                                                                                                                             git:main*
-v1 ➤ make 
-[Testing] v1
-
-Test failed with "Predicate checking if the action is paper"
-Trace:
-File "test/../lib/action.jsligo", line 12, characters 4-57:
-
-File "test/t01_action.jsligo", line 7, characters 23-52 ,
-File "test/common/check.jsligo", line 27, characters 41-48 ,
-File "test/common/check.jsligo", line 27, characters 4-52 ,
-File "test/t01_action.jsligo", line 48, character 14 to line 50, character 3
-make: *** [all] Error 1
-```
-
-Open the file `lib/action.jsligo` and write the expected code and iterate.
 
 ## Retrospective ...
 

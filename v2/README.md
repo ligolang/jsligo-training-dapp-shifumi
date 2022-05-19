@@ -20,6 +20,8 @@ Each player can reveal his choice sending the `chest_key` and  the `secret` used
 Of course a player cannot reveal its choice since the other one did not play. When each player has 
 revealedwe can can conclude.
 
+We start from the solution designed for the simple approach i.e. v1. First we review the initial sequence diagrams. 
+
 ## Nominal sequence diagram
 
 ```mermaid
@@ -27,17 +29,21 @@ sequenceDiagram
   participant Player1
   participant SM
   participant Player2
+  participant Sender
   Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Note right of Player2: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action)
   Player2->>SM: chest(action)
   Player1->>SM: reveal
   Player2->>SM: reveal
+  Sender->>SM: conclude
 ```
 
-## Prohibited sequences
+## Additional Prohibited sequences
 
 ### Cannot reveal when another player did not play
+
+We should avoid earlier play revelation.
 
 ```mermaid
 sequenceDiagram
@@ -46,17 +52,6 @@ sequenceDiagram
   Note left of Player1: Prepare action(stone|paper|scissor, secret)
   Player1->>SM: chest(action)
   Player1-xSM: reveal
-```
-
-### Cannot play twice
-
-```mermaid
-sequenceDiagram
-  participant Player1
-  participant SM
-  Note left of Player1: Prepare action(stone|paper|scissor, secret)
-  Player1->>SM: chest(action)
-  Player1-xSM: chest(action)
 ```
 
 ### Cannot reveal twice
@@ -73,6 +68,56 @@ sequenceDiagram
   Player1->>SM: reveal
   Player1-xSM: reveal
 ```
+
+### Cannot conclude when round is not completed
+
+```mermaid
+  participant Player1
+  participant SM
+  participant Player2
+  participant Sender
+  Note left of Player1: Prepare action(stone|paper|scissor, secret)
+  Note right of Player2: Prepare action(stone|paper|scissor, secret)
+  Player1->>SM: chest(action)
+  Player2->>SM: chest(action)
+  Player1->>SM: reveal
+  Sender-xSM: conclude
+```
+
+## Howto?
+
+The implementation can be done thanks to the proposed tests suite. 
+
+```sh
+training-shifumi ➤ cd v2
+v1 ➤ make 
+[Testing] v2
+("✅" , {expected = true})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = true})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = false})
+("✅" , {expected = true})
+Everything at the top-level was executed.
+- tests exited with value ().
+("✅" , {expected = true})
+("✅" , {expected = false})
+
+Test failed with "Predicate checking if the round_value is revealed"
+Trace:
+File "test/../lib/round_value.jsligo", line 25, characters 4-65:
+
+File "test/t02_round_value.jsligo", line 21, characters 23-65 ,
+File "test/common/check.jsligo", line 27, characters 41-48 ,
+File "test/common/check.jsligo", line 27, characters 4-52 ,
+File "test/t02_round_value.jsligo", line 102, character 14 to line 104, character 3
+make: *** [all] Error 1
+```
+
+Once again go through each file where implementation is required and propose an implementation.
 
 ## Smart contract data types
 

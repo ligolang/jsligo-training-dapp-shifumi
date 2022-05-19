@@ -1,0 +1,30 @@
+#import "common/check.jsligo" "Check"
+#import "../lib/utils/chest.jsligo" "Chest"
+ 
+// prepare players
+const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+const alice: address = Test.nth_bootstrap_account(0);
+
+const get_chest = (message: string, secret: nat) : [chest, chest_key] => {
+    const payload = Bytes.pack(play);
+    return Test.create_chest(payload, secret);
+};
+
+// ---
+
+const case01 = (): unit => {
+    // Given
+    Test.set_source(alice);
+    const chest = get_chest("Hello", 42 as nat);
+
+    // When
+    const message = Chest.decode(chest[1], 42 as nat)(chest[0]);
+
+    Check.assert_equal(message, "Hello");   
+};
+
+// ---
+
+const tests = Check.cases(list([ 
+    case01
+]));

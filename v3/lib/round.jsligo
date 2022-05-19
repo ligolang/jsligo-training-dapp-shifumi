@@ -15,10 +15,10 @@ export const get_round_value = (round:t, player:Player.t) : RoundValue.t => {
     })
 };
 
-export const play = (round:t, player:Player.t, action:chest, amount:tez) : t => {
+export const play = (round:t, player:Player.t, action:chest) : t => {
     return match(player, {
-        Player1: () => [ RoundValue.play(round[0], action, amount), round[1] ],
-        Player2: () => [ round[0], RoundValue.play(round[1], action, amount) ],
+        Player1: () => [ RoundValue.play(round[0], action), round[1] ],
+        Player2: () => [ round[0], RoundValue.play(round[1], action) ],
     })
 };
 
@@ -28,4 +28,3 @@ export const reveal = (round:t, player:Player.t, decode: (chest:chest) => Action
         Player2: () => [ round[0], RoundValue.reveal(round[1], decode) ],
     })
 };
-
