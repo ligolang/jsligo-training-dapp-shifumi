@@ -44,37 +44,33 @@ const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
     const round_value_player1 = Round.get_round_value(round, Player.player1);
     const round_value_player2 = Round.get_round_value(round, Player.player2);
 
-    match(RoundValue.get_revealed(round_value_player1,round_value_player2), {
-        None: () => 
-            failwith(Errors.cannot_conclude),
-        Some: actions => {
-            if (Action.win_against(actions.player1[0], actions.player2[0])) {
-                const gain = actions.player1[1] + actions.player2[1];
-                const who = get_contract(Storage.get_address(storage, Player.player1))
-                return [
-                    list([Tezos.transaction(unit, gain, who)]),
-                    Storage.new_game(storage)
-                ];
-            };
-            
-            if (Action.win_against(actions.player2[0], actions.player1[0])) {
-                const gain = actions.player1[1] + actions.player2[1];
-                const who = get_contract(Storage.get_address(storage, Player.player2))
-                return [
-                    list([Tezos.transaction(unit, gain, who)]),
-                    Storage.new_game(storage)
-                ];
-            };
-            
-            return [
-                list([                                    
-                    Tezos.transaction(unit, actions.player1[1], get_contract(Storage.get_address(storage, Player.player1))),
-                    Tezos.transaction(unit, actions.player2[1], get_contract(Storage.get_address(storage, Player.player2)))
-                ]),
-                Storage.new_game(storage)
-            ];
-        }
-    });
+    const actions = Options.get_exn(RoundValue.get_revealed(round_value_player1,round_value_player2), Errors.cannot_conclude);
+
+    if (Action.win_against(actions.player1[0], actions.player2[0])) {
+        const gain = actions.player1[1] + actions.player2[1];
+        const who = get_contract(Storage.get_address(storage, Player.player1))
+        return [
+            list([Tezos.transaction(unit, gain, who)]),
+            Storage.new_game(storage)
+        ];
+    };
+    
+    if (Action.win_against(actions.player2[0], actions.player1[0])) {
+        const gain = actions.player1[1] + actions.player2[1];
+        const who = get_contract(Storage.get_address(storage, Player.player2))
+        return [
+            list([Tezos.transaction(unit, gain, who)]),
+            Storage.new_game(storage)
+        ];
+    };
+    
+    return [
+        list([                                    
+            Tezos.transaction(unit, actions.player1[1], get_contract(Storage.get_address(storage, Player.player1))),
+            Tezos.transaction(unit, actions.player2[1], get_contract(Storage.get_address(storage, Player.player2)))
+        ]),
+        Storage.new_game(storage)
+    ];
 };
 
 export type parameter = ["Play", chest] | ["Reveal", chest_key, nat] | ["Conclude"];
