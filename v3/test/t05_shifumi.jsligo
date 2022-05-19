@@ -14,12 +14,6 @@ const get_contract = (storage:Contract.Storage.t) : contract<Contract.parameter>
     return (Test.to_contract(originated[0]) as contract<Contract.parameter>); 
 };
 
-// prepare players
-const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
-const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
-const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
-const james: address = Test.nth_bootstrap_account(2);
-
 // Shifumi turn
 const get_play = ([play, secret]: [Contract.Storage.Action.t, nat]) : [chest, chest_key] => {
     const payload = Bytes.pack(play);
@@ -31,6 +25,12 @@ const get_play = ([play, secret]: [Contract.Storage.Action.t, nat]) : [chest, ch
 // ----------------------------------
 
 const alice_play = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
 
@@ -46,6 +46,12 @@ const alice_play = () : string => {
 };
 
 const alice_play_twice = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -63,6 +69,12 @@ const alice_play_twice = () : string => {
 
 
 const alice_play_and_reveal = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -79,6 +91,12 @@ const alice_play_and_reveal = () : string => {
 };
 
 const alice_reveal = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -94,6 +112,12 @@ const alice_reveal = () : string => {
 };
 
 const alice_play_bob_play = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -112,6 +136,12 @@ const alice_play_bob_play = () : string => {
 };
 
 const alice_play_bob_play_alice_reveal = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -133,6 +163,12 @@ const alice_play_bob_play_alice_reveal = () : string => {
 };
 
 const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
     Test.set_source(alice.address);
@@ -157,6 +193,12 @@ const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
 };
 
 const james_cannot_play = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+    
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
 
@@ -172,6 +214,12 @@ const james_cannot_play = () : string => {
 };
 
 const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
 
@@ -197,11 +245,15 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win = () : string => {
 };
 
 const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win_the_price = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     Test.set_baker(james);
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));
-    const bob_balance = Test.get_balance (bob.address);
-    const alice_balance = Test.get_balance (alice.address);
 
     Test.set_source(alice.address);
     const material_alice = get_play(Action.paper, alice.secret);
@@ -216,23 +268,31 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_bob_win_the_price = () : s
     Test.set_source(bob.address);
     const _ = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
 
+    const bob_balance = Test.get_balance (bob.address);
+    const alice_balance = Test.get_balance (alice.address);
+
     // When
-    Test.set_source(bob.address);
+    Test.set_source(james);
     const result = Test.transfer_to_contract(contract, Conclude(), 0 as tez);
+    Test.bake_until_n_cycle_end(1 as nat);
 
     // Then
     assert(Test.get_balance(bob.address) > bob_balance);
-    assert(Test.get_balance(alice.address) < alice_balance);
+    Test.log(Test.get_balance(alice.address) == alice_balance);
     
     return "✅";
 };
 
 const alice_play_bob_play_alice_reveal_bob_reveal_and_nobody_win_the_price = () : string => {
+    // prepare players
+    const _:unit = Test.reset_state((3 as nat),(list([6000 as tez,6000 as tez,6000 as tez]) as list<tez>));
+    const alice: player = { address : Test.nth_bootstrap_account(0), secret: 42 as nat };
+    const bob: player = { address : Test.nth_bootstrap_account(1), secret: 24 as nat };
+    const james: address = Test.nth_bootstrap_account(2);
+
     // Given
     Test.set_baker(james);
     const contract = get_contract(Contract.Storage.initial_game(alice.address, bob.address));    
-    const bob_balance = Test.get_balance (bob.address);
-    const alice_balance = Test.get_balance (alice.address);
 
     Test.set_source(alice.address);
     const material_alice = get_play(Action.paper, alice.secret);
@@ -245,14 +305,17 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_nobody_win_the_price = () 
     Test.set_source(alice.address);
     const _ = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
     const _ = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
+    const bob_balance = Test.get_balance (bob.address);
+    const alice_balance = Test.get_balance (alice.address);
 
     // When
-    Test.set_source(bob.address);
+    Test.set_source(james);
     const result = Test.transfer_to_contract(contract, Conclude(), 0 as tez);
+    Test.bake_until_n_cycle_end(1 as nat);
 
     // Then
-    assert(Test.get_balance(bob.address)   < bob_balance);
-    assert(Test.get_balance(alice.address) < alice_balance);
+    assert(Test.get_balance(bob.address) > bob_balance);
+    assert(Test.get_balance(alice.address) > alice_balance);
     
     return "✅";
 };

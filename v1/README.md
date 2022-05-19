@@ -80,7 +80,7 @@ The implementation can be done thanks to the proposed tests suite.
 ```sh
 training-shifumi ➤ cd v1
 v1 ➤ make 
-[Testing] v1
+[Testing] test/t01_action.jsligo
 
 Test failed with "Predicate checking if the action is paper"
 Trace:
@@ -90,7 +90,7 @@ File "test/t01_action.jsligo", line 7, characters 23-52 ,
 File "test/common/check.jsligo", line 27, characters 41-48 ,
 File "test/common/check.jsligo", line 27, characters 4-52 ,
 File "test/t01_action.jsligo", line 48, character 14 to line 50, character 3
-make: *** [all] Error 1
+make: *** [test/t01_action.dummy] Error 1
 ```
 
 Open the file `lib/action.jsligo` and write the expected code and iterate.

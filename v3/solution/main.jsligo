@@ -37,6 +37,9 @@ export const reveal = (storage: Storage.t, player_address:address, chest_key:che
 };
 
 const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
+    const get_contract = (address: address): contract<unit> =>
+        (Tezos.get_contract(address) as contract<unit>);
+
     const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
     const round_value_player1 = Round.get_round_value(round, Player.player1);
     const round_value_player2 = Round.get_round_value(round, Player.player2);
@@ -47,7 +50,7 @@ const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
         Some: actions => {
             if (Action.win_against(actions.player1[0], actions.player2[0])) {
                 const gain = actions.player1[1] + actions.player2[1];
-                const who = Tezos.get_contract(Storage.get_address(storage, Player.player1)) as contract<unit>;
+                const who = get_contract(Storage.get_address(storage, Player.player1))
                 return [
                     list([Tezos.transaction(unit, gain, who)]),
                     Storage.new_game(storage)
@@ -56,7 +59,7 @@ const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
             
             if (Action.win_against(actions.player2[0], actions.player1[0])) {
                 const gain = actions.player1[1] + actions.player2[1];
-                const who = Tezos.get_contract(Storage.get_address(storage, Player.player2)) as contract<unit>;
+                const who = get_contract(Storage.get_address(storage, Player.player2))
                 return [
                     list([Tezos.transaction(unit, gain, who)]),
                     Storage.new_game(storage)
@@ -65,8 +68,8 @@ const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
             
             return [
                 list([                                    
-                    Tezos.transaction(unit, actions.player1[1], Tezos.get_contract(Storage.get_address(storage, Player.player1)) as contract<unit>),
-                    Tezos.transaction(unit, actions.player2[1], Tezos.get_contract(Storage.get_address(storage, Player.player2)) as contract<unit>)
+                    Tezos.transaction(unit, actions.player1[1], get_contract(Storage.get_address(storage, Player.player1))),
+                    Tezos.transaction(unit, actions.player2[1], get_contract(Storage.get_address(storage, Player.player2)))
                 ]),
                 Storage.new_game(storage)
             ];

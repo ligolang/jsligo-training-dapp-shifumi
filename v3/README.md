@@ -91,7 +91,7 @@ The implementation can be done thanks to the proposed tests suite.
 ```sh
 training-shifumi ➤ cd v2
 v1 ➤ make 
-[Testing] v2
+[Testing] test/t01_action.jsligo
 ("✅" , {expected = true})
 ("✅" , {expected = false})
 ("✅" , {expected = false})
@@ -103,7 +103,9 @@ v1 ➤ make
 ("✅" , {expected = true})
 Everything at the top-level was executed.
 - tests exited with value ().
+[Testing] test/t02_round_value.jsligo
 ("✅" , {expected = true})
+("✅" , {expected = false})
 ("✅" , {expected = false})
 
 Test failed with "Should provide a play action for a given round_value and chest"
@@ -114,7 +116,7 @@ File "test/t02_round_value.jsligo", line 32, characters 28-77 ,
 File "test/common/check.jsligo", line 27, characters 41-48 ,
 File "test/common/check.jsligo", line 27, characters 4-52 ,
 File "test/t02_round_value.jsligo", line 102, character 14 to line 104, character 3
-make: *** [all] Error 1
+make: *** [test/t02_round_value.dummy] Error 1
 ```
 
 Once again go through each file where implementation is required and propose an implementation.
