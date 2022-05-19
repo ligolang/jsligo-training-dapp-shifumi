@@ -31,7 +31,7 @@ sequenceDiagram
   Player1->>SM: reveal
   Player2->>SM: reveal
   Sender->>SM: conclude
-  SM-->>--Player1: amount1 + amount2)
+  SM-->>-Player1: amount1 + amount2)
 ```
 
 ### Player2 wins
@@ -49,7 +49,7 @@ sequenceDiagram
   Player1->>SM: reveal
   Player2->>SM: reveal
   Sender->>SM: conclude
-  SM-->>--Player2: amount1 + amount2)
+  SM-->>-Player2: amount1 + amount2)
 ```
 ### Draw
 
@@ -66,8 +66,8 @@ sequenceDiagram
   Player1->>SM: reveal
   Player2->>SM: reveal
   Sender->>SM: conclude
-  SM-->>--Player1: amount1
-  SM-->>--Player2: amount2
+  SM-->>-Player1: amount1
+  SM-->>-Player2: amount2
 ```
 
 ### Round Value review
