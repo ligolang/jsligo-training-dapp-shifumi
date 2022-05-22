@@ -27,11 +27,11 @@ Please install this software first on your machine or use online alternative :
 - [ ] [VS Code](https://code.visualstudio.com/download) : as text editor
 - [ ] [ligo](https://ligolang.org/docs/intro/installation/) : high level language that's transpile to michelson low level language and provide lot of development support for Tezos
 
-# [V1](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v1/README.md)
+# [V1](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v1/README.md) A simple game
 
-# [V2](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v2/README.md)
+# [V2](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v2/README.md) A fair game
 
-# [V3](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v3/README.md)
+# [V3](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v3/README.md) Time to bet!
 
 # License
 
