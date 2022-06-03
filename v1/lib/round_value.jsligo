@@ -1,8 +1,10 @@
 #import "action.jsligo" "Action"
 
-export type t = unit;
+export type t = 
+| ["Waiting"] 
+| ["Played", Action.t];
 
-export const waiting : t = unit;
+export const waiting : t = Waiting();
 
 export const is_waiting = (round_value:t) : bool => {
     failwith("Predicate checking if the round_value is waiting");

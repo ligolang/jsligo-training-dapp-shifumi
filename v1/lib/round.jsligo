@@ -2,9 +2,9 @@
 #import "action.jsligo" "Action"
 #import "round_value.jsligo" "RoundValue"
 
-export type t = unit;
+export type t = [RoundValue.t, RoundValue.t];
 
-const fresh_round = unit;
+export const fresh_round = [RoundValue.waiting, RoundValue.waiting];
 
 export const get_round_value = (round:t, player:Player.t) : RoundValue.t => {
     failwith("Return the round value for the given player");

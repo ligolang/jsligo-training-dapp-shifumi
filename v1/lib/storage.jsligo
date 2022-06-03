@@ -3,7 +3,11 @@
 #import "round_value.jsligo" "RoundValue"
 #import "round.jsligo" "Round"
 
-export type t = unit;
+export type t = {
+    round   : nat,
+    players : [address,address],
+    rounds  : map<nat, Round.t>,
+};
 
 export const fresh_game = (p1:address, p2:address) : t => {
     failwith("Should provide a a brand new storage");
