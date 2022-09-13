@@ -151,6 +151,7 @@ classDiagram
          type t
          is_waiting(t) bool
          is_played(t) bool
+         is_revealed(t) bool
          play(t,chest,tez) t
          reveal(t,(chest) -> Action.t) t
     }
@@ -161,6 +162,9 @@ classDiagram
          get_round_value(t,Player.t) (RoundValue.t)
          play(t,Player.t) t
          reveal(t,Player.t,(chest) -> Action.t) t
+         is_waiting(t,Player.t) bool
+         is_played(t,Player.t) bool
+         is_revealed(t,Player.t) bool
     }
 
     class Storage{
