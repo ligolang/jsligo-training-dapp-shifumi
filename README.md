@@ -9,10 +9,10 @@ Training Shifumi dapp
 
 > dapp : A decentralized application (dApp) is a type of distributed open source software application that runs on a peer-to-peer (P2P) blockchain network rather than on a single computer. DApps are visibly similar to other software applications that are supported on a website or mobile device but are P2P supported
 
-Goal of this training is to develop a shifumi game with smart contract. You will learn : 
-- create a smart contract in jsligo,
-- use specific chest functionality,
-- apply a TDD (Test driven development) approach.
+Goal of this training is to develop a shifumi game with a smart contract. You will learn : 
+- how to elaborate a smart contract in jsligo,
+- how to use use specific chest functionality and
+- how to develop with a TDD (Test driven development) approach.
 
 # Prerequisites
 
