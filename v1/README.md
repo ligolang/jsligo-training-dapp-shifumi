@@ -158,7 +158,7 @@ classDiagram
 
 The current implementation is quite easy and natural but is it a good solution?
 
-In the `t05_shifumi.jsligo` add the following test:
+In the `t05_shifumi.jsligo` we have the code fragment:
 
 ````
 const why_this_solution_is_not_a_good_one = () : unit => {
