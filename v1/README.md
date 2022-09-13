@@ -140,6 +140,8 @@ classDiagram
          fresh_round :t
          get_round_value(t,Player.t) (RoundValue.t)
          play(t,Player.t,Action.t) t
+         is_waiting(t,Player.t) bool
+         is_played(t,Player.t) bool
     }
 
     class Storage{
