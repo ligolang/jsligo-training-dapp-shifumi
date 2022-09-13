@@ -149,11 +149,11 @@ classDiagram
 
     class RoundValue{
          type t
+         play(t,chest,tez) t
+         reveal(t,(chest) -> Action.t) t
          is_waiting(t) bool
          is_played(t) bool
          is_revealed(t) bool
-         play(t,chest,tez) t
-         reveal(t,(chest) -> Action.t) t
     }
 
     class Round{
