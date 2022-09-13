@@ -130,9 +130,9 @@ classDiagram
 
     class RoundValue{
          type t
-         is_waiting(t) bool
-         is_played(t) bool
          play(t,Action.t) t
+         is_waiting(t) bool 
+         is_played(t) bool
     }
 
     class Round{
