@@ -38,7 +38,7 @@ const case03 = (): unit => {
     const new_round = Round.play(round, Player.player1, Action.scissor);
 
     // Then
-    Check.assert_equal(RoundValue.is_played(Round.get_round_value(new_round, Player.player1)), true);   
+    Check.assert_equal(Round.is_played(new_round, Player.player1), true);   
 };
 
 const case04 = (): unit => {
@@ -49,7 +49,7 @@ const case04 = (): unit => {
     const new_round = Round.play(round, Player.player1, Action.scissor);
 
     // Then
-    Check.assert_equal(RoundValue.is_waiting(Round.get_round_value(new_round, Player.player2)), true);   
+    Check.assert_equal(Round.is_waiting(new_round, Player.player2), true);   
 };
 
 // ---

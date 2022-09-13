@@ -6,7 +6,7 @@ export type t =
     [RoundValue.t, RoundValue.t];
 
 const fresh_round = 
-    [Waiting(), Waiting()];
+    [RoundValue.waiting, RoundValue.waiting];
 
 export const get_round_value = (round:t, player:Player.t) : RoundValue.t => {
     return match(player, {
@@ -28,3 +28,12 @@ export const reveal = (round:t, player:Player.t, decode: (chest:chest) => Action
         Player2: () => [ round[0], RoundValue.reveal(round[1], decode) ],
     })
 };
+
+export const is_waiting = (round:t, player:Player.t): bool => 
+    RoundValue.is_waiting(get_round_value(round, player));
+
+export const is_played = (round:t, player:Player.t): bool => 
+    RoundValue.is_played(get_round_value(round, player));
+
+export const is_revealed = (round:t, player:Player.t): bool => 
+    RoundValue.is_revealed(get_round_value(round, player));

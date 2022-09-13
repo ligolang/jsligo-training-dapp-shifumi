@@ -31,7 +31,7 @@ Please install this software first on your machine or use online alternative :
 
 # [V2](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v2/README.md) A fair game
 
-# [V3](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v3/README.md) Time to bet!
+# [V3](https://github.com/ligolang/jsligo-training-dapp-shifumi/blob/main/v3/README.md) Time to bet
 
 # License
 

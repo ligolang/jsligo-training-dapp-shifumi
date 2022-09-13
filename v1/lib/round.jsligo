@@ -13,3 +13,9 @@ export const get_round_value = (round:t, player:Player.t) : RoundValue.t => {
 export const play = (round:t, player:Player.t, action:Action.t) : t => {
     failwith("Should provide a play action for a given round, player and action");
 };
+
+export const is_waiting = (round:t, player:Player.t): bool => 
+    RoundValue.is_waiting(get_round_value(round, player));
+
+export const is_played = (round:t, player:Player.t): bool => 
+    RoundValue.is_played(get_round_value(round, player));

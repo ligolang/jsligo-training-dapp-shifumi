@@ -13,6 +13,8 @@ const play = (storage:Storage.t, player_address:address, action: Action.t) : Sto
 };
 
 const conclude = (storage:Storage.t): [list<operation>, Storage.t] => {
+    const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
+
     failwith("Should conclude the current round if possible otherwise fail");
 };
 

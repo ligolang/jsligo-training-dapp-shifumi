@@ -67,7 +67,7 @@ const case07 = (): unit => {
     const round_value : RoundValue.t = RoundValue.play(RoundValue.waiting, played[0]);
 
     // When
-    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (chest:chest) => Action.scissor);
+    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (_chest:chest) => Action.scissor);
 
     // Then
     Check.assert_equal(RoundValue.is_revealed(new_round_value), true);   
@@ -79,7 +79,7 @@ const case08 = (): unit => {
     const round_value : RoundValue.t = RoundValue.play(RoundValue.waiting, played[0]);
 
     // When
-    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (chest:chest) => Action.scissor);
+    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (_chest:chest) => Action.scissor);
 
     // Then
     Check.assert_equal(RoundValue.is_waiting(new_round_value), false);   
@@ -91,7 +91,7 @@ const case09 = (): unit => {
     const round_value : RoundValue.t = RoundValue.play(RoundValue.waiting, played[0]);
 
     // When
-    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (chest:chest) => Action.scissor);
+    const new_round_value : RoundValue.t = RoundValue.reveal(round_value, (_chest:chest) => Action.scissor);
 
     // Then
     Check.assert_equal(RoundValue.is_played(new_round_value), false);   

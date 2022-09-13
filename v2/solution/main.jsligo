@@ -24,11 +24,11 @@ const reveal = ([storage, player_address, chest_key, secret]:[Storage.t, address
     const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
     const player = Options.get_exn(Storage.get_player(storage, player_address), Errors.user_not_allowed_to_play);
 
-    if (RoundValue.is_waiting(Round.get_round_value(round, Player.player1)) || 
-        RoundValue.is_waiting(Round.get_round_value(round, Player.player2))) {
+    if (Round.is_waiting(round, Player.player1) || Round.is_waiting(round, Player.player2)) {
         return failwith(Errors.user_not_allowed_to_reveal);
-    } else if (RoundValue.is_played(Round.get_round_value(round, player))) {
-        return Storage.update_round(storage, Round.reveal(round, player, Chest.decoder(chest_key, secret) as decoder));
+    } else if (Round.is_played(round, player)) {
+        const revealed = Round.reveal(round, player, Chest.decoder(chest_key, secret) as decoder);
+        return Storage.update_round(storage, revealed);
     } else {
         return failwith(Errors.user_not_allowed_to_reveal);
     };
@@ -37,20 +37,22 @@ const reveal = ([storage, player_address, chest_key, secret]:[Storage.t, address
 export const conclude = (storage:Storage.t): Storage.t => {
     const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
 
-    if (RoundValue.is_revealed(Round.get_round_value(round, Player.player1)) && 
-        RoundValue.is_revealed(Round.get_round_value(round, Player.player2))) {
+    if (Round.is_revealed(round, Player.player1) && Round.is_revealed(round, Player.player2)) {
         return Storage.new_game(storage);
     } else {
         return failwith(Errors.cannot_conclude);
     }
 };
 
-export type parameter = ["Play", chest] | ["Reveal", [chest_key, nat]] | ["Conclude"];
+export type parameter = 
+| ["Play", chest] 
+| ["Reveal", chest_key, nat]
+| ["Conclude"];
 
 export const main = (parameter: parameter, storage: Storage.t) : [list<operation>, Storage.t] => {
     match(parameter, {
-        Play   : p => [list([]) as list<operation>, play(storage, Tezos.sender, p)],
-        Reveal : p => [list([]) as list<operation>, reveal(storage, Tezos.sender, p[0], p[1])],
-        Conclude : p => [list([]) as list<operation>, conclude(storage)]
+        Play     : a  => [list([]), play(storage, Tezos.get_sender(), a)],
+        Reveal   : r  => [list([]), reveal(storage, Tezos.get_sender(), r[0], r[1])],
+        Conclude : () => [list([]), conclude(storage)]
     });    
 };

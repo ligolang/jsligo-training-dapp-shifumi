@@ -62,7 +62,7 @@ const case05 = (): unit => {
     const round = Round.play(Round.fresh_round, Player.player1, get_play(Action.scissor, 42 as nat));
 
     // When
-    const new_round = Round.reveal(round, Player.player1, (chest:chest) => Action.scissor);
+    const new_round = Round.reveal(round, Player.player1, (_chest:chest) => Action.scissor);
 
     // Then
     Check.assert_equal(RoundValue.is_revealed(Round.get_round_value(new_round, Player.player1)), true);   
@@ -73,7 +73,7 @@ const case06 = (): unit => {
     const round = Round.play(Round.fresh_round, Player.player1, get_play(Action.scissor, 42 as nat));
 
     // When
-    const new_round = Round.reveal(round, Player.player1, (chest:chest) => Action.scissor);
+    const new_round = Round.reveal(round, Player.player1, (_chest:chest) => Action.scissor);
 
     // Then
     Check.assert_equal(RoundValue.is_revealed(Round.get_round_value(new_round, Player.player2)), false);   

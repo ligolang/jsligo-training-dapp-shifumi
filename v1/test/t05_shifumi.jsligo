@@ -36,7 +36,7 @@ const alice_play = () : string => {
     // Then
     Assert.assert_success(result);
 
-    return "✅";
+    return "Success";
 };
 
 const alice_conclude = () : string => {
@@ -50,7 +50,7 @@ const alice_conclude = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.cannot_conclude);
 
-    return "✅";
+    return "Success";
 };
 
 const alice_play_twice = () : string => {
@@ -66,7 +66,7 @@ const alice_play_twice = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.user_not_allowed_to_play);
 
-    return "✅";
+    return "Success";
 };
 
 const alice_play_and_conclude = () : string => {
@@ -82,7 +82,7 @@ const alice_play_and_conclude = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.cannot_conclude);
 
-    return "✅";
+    return "Success";
 };
 
 const alice_play_bob_play = () : string => {
@@ -100,7 +100,7 @@ const alice_play_bob_play = () : string => {
     // Then
     Assert.assert_success(result);
     
-    return "✅";
+    return "Success";
 };
 
 const alice_play_bob_play_and_conclude = () : string => {
@@ -119,7 +119,7 @@ const alice_play_bob_play_and_conclude = () : string => {
     // Then
     Assert.assert_success(result);
     
-    return "✅";
+    return "Success";
 };
 
 const james_cannot_play = () : string => {
@@ -134,7 +134,7 @@ const james_cannot_play = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.user_not_allowed_to_play)
     
-    return "✅";
+    return "Success";
 };
 
 const test_alice_play = alice_play ();
@@ -166,4 +166,4 @@ const why_this_solution_is_not_a_good_one = () : unit => {
 
 }
 
-const test_why_this_solution_is_not_a_good_one = why_this_solution_is_not_a_good_one ();
+// const test_why_this_solution_is_not_a_good_one = why_this_solution_is_not_a_good_one ();

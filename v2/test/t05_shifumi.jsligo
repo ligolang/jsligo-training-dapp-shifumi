@@ -43,7 +43,7 @@ const alice_play = () : string => {
     // Then
     Assert.assert_success(result);
 
-    return "✅";
+    return "Success";
 };
 
 const alice_play_twice = () : string => {
@@ -59,7 +59,7 @@ const alice_play_twice = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.user_not_allowed_to_play);
 
-    return "✅";
+    return "Success";
 };
 
 
@@ -76,7 +76,7 @@ const alice_play_and_reveal = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.user_not_allowed_to_reveal);
     
-    return "✅";
+    return "Success";
 };
 
 const alice_play_and_conclude = () : string => {
@@ -92,7 +92,7 @@ const alice_play_and_conclude = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.cannot_conclude);
 
-    return "✅";
+    return "Success";
 };
 
 const alice_reveal = () : string => {
@@ -107,7 +107,7 @@ const alice_reveal = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.user_not_allowed_to_reveal);
     
-    return "✅";
+    return "Success";
 };
 
 const alice_conclude = () : string => {
@@ -116,13 +116,12 @@ const alice_conclude = () : string => {
 
     // When
     Test.set_source(alice.address);
-    const material = get_play(Action.paper, alice.secret);
     const result = Test.transfer_to_contract(contract, Conclude(), 10 as tez);
     
     // Then
     Assert.assert_string_failure(result, Errors.cannot_conclude);
 
-    return "✅";
+    return "Success";
 };
 
 const alice_play_bob_play = () : string => {
@@ -140,7 +139,7 @@ const alice_play_bob_play = () : string => {
     // Then
     Assert.assert_success(result);
     
-    return "✅";
+    return "Success";
 };
 
 const alice_play_bob_play_alice_reveal = () : string => {
@@ -161,7 +160,7 @@ const alice_play_bob_play_alice_reveal = () : string => {
     // Then
     Assert.assert_success(result);
     
-    return "✅";
+    return "Success";
 };
 
 const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
@@ -176,16 +175,16 @@ const alice_play_bob_play_alice_reveal_bob_reveal = () : string => {
     const _ = Test.transfer_to_contract(contract, Play(material_bob[0]), 10 as tez);
 
     Test.set_source(alice.address);
-    const result = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
+    const _ = Test.transfer_to_contract(contract, Reveal([material_alice[1], alice.secret]), 0 as tez);
 
     // When
     Test.set_source(bob.address);
     const result = Test.transfer_to_contract(contract, Reveal([material_bob[1], bob.secret]), 0 as tez);
 
     // Then
-    // Assert.assert_success(result);
+    Assert.assert_success(result);
     
-    return "✅";
+    return "Success";
 };
 
 const james_cannot_play = () : string => {
@@ -200,7 +199,7 @@ const james_cannot_play = () : string => {
     // Then
     Assert.assert_string_failure(result, Errors.user_not_allowed_to_play)
     
-    return "✅";
+    return "Success";
 };
 
 const alice_play_bob_play_alice_reveal_bob_reveal_and_win = () : string => {
@@ -226,7 +225,7 @@ const alice_play_bob_play_alice_reveal_bob_reveal_and_win = () : string => {
     // Then
     Assert.assert_success(result);
     
-    return "✅";
+    return "Success";
 };
 
 const test_alice_play = alice_play ();

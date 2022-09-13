@@ -28,9 +28,9 @@ const new_game = (storage:t) : t => {
 
 export const get_player = (storage:t, player:address) : option<Player.t> => {
     if (storage.players[0] == player) {
-        return Some (Player1());    
+        return Some (Player.player1);    
     } else if (storage.players[1] == player) {
-        return Some (Player2());
+        return Some (Player.player2);
     } else {
         return None ();
     }

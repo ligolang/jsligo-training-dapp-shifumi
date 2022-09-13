@@ -19,3 +19,9 @@ export const play = (round:t, player:Player.t, action:Action.t) : t => {
         Player2: () => [ round[0], RoundValue.play(round[1], action) ],
     })
 };
+
+export const is_waiting = (round:t, player:Player.t): bool => 
+    RoundValue.is_waiting(get_round_value(round, player));
+
+export const is_played = (round:t, player:Player.t): bool => 
+    RoundValue.is_played(get_round_value(round, player));

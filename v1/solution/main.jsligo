@@ -10,7 +10,7 @@ const play = (storage:Storage.t, player_address:address, action: Action.t) : Sto
     const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
     const player = Options.get_exn(Storage.get_player(storage, player_address), Errors.user_not_allowed_to_play);
 
-    if (RoundValue.is_waiting(Round.get_round_value(round, player))) {
+    if (Round.is_waiting(round, player)) {
         return Storage.update_round(storage, Round.play(round, player, action));
     } else {
         return failwith(Errors.user_not_allowed_to_play);
@@ -20,19 +20,20 @@ const play = (storage:Storage.t, player_address:address, action: Action.t) : Sto
 const conclude = (storage:Storage.t): Storage.t => {
     const round = Options.get_exn(Storage.get_current_round(storage), Errors.invalid_round);
 
-    if (RoundValue.is_played(Round.get_round_value(round, Player.player1)) && 
-        RoundValue.is_played(Round.get_round_value(round, Player.player2))) {
+    if (Round.is_played(round, Player.player1) && Round.is_played(round, Player.player2)) {
         return Storage.new_game(storage);
     } else {
         return failwith(Errors.cannot_conclude);
     }
 };
 
-export type parameter = | ["Play", Action.t] | ["Conclude"];
+export type parameter = 
+| ["Play", Action.t] 
+| ["Conclude"];
 
 export const main = (parameter:parameter, storage:Storage.t) : [list<operation>, Storage.t] => {
     match(parameter, {
-        Play : p => [list([]) as list<operation>, play(storage, Tezos.sender, p)],
-        Conclude: () => [list([]) as list<operation>, conclude(storage)]
+        Play    : a  => [list([]), play(storage, Tezos.get_sender(), a)],
+        Conclude: () => [list([]), conclude(storage)]
     });
 };
